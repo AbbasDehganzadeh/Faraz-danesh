@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+*/package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -78,7 +79,9 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+*.env
 
+.vscode
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
