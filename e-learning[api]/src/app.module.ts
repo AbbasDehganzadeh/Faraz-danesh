@@ -10,9 +10,9 @@ import config from 'config';
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
+      type: 'sqlite', //NOTE: use postgres later!
       database: 'auth',
-      entities = [__dirname + '/**/*.entity.{js,ts}'],
+      entities: [__dirname + '/**/*.entity.{js,ts}'],
       synchronize: true,
     }),
     AuthModule,
