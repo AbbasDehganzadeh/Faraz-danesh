@@ -5,14 +5,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import config from 'config';
+import { User } from './auth/entities/user.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     TypeOrmModule.forRoot({
-      type: 'sqlite', //NOTE: use postgres later!
-      database: 'auth',
-      entities: [__dirname + '/**/*.entity.{js,ts}'],
+      type: 'better-sqlite3', //NOTE: use postgres later!
+      database: './auth.sql',
+      entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
       synchronize: true,
     }),
     AuthModule,
