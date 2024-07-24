@@ -1,15 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { scryptSync, randomBytes, timingSafeEqual } from 'node:crypto';
+import { Buffer } from 'node:buffer';
+import { LoginUserDto, SignupUserDto } from './dtos/user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  getUser() {
-    return 'Me';
+  constructor(
+    @InjectRepository(User) private users: Repository<User>,
+    private jwtService: JwtService,
+  ) {}
+  async getUserById(id: number) {
+    const user = await this.users.findOneBy({ id });
+    return user;
   }
-  register() {
-    return 'User registered';
+  async getUser(username: string) {
+    const user = await this.users.findOne({ where: { uname: username } });
+    return user;
   }
-  logIn() {
-    return 'user logged in';
+  signup(data: SignupUserDto) {
+    const hashedpass = this.createPassword(data.password);
+    const user = this.users.create({
+      fname: data.firstname,
+      lname: data.lastname,
+      uname: data.username,
+      email: data.email,
+      password: hashedpass,
+    });
+    this.users.save(user);
+
+    const token = this.createJwt(user.uname);
+    return { token };
+  }
+  async logIn(data: LoginUserDto) {
+    const { username, password } = data;
+    const user = await this.validateUser(username, password);
+
+    if (user) {
+      const token = this.createJwt(username);
+      return { token };
+    }
   }
   refreshToken() {
     return 'tokens are created';
@@ -28,6 +61,9 @@ export class AuthService {
       'wrong username, or password',
       HttpStatus.BAD_REQUEST,
     );
+  }
+  createJwt(username:string) {
+    return this.jwtService.sign({username},{secret: 'super secret'})
   }
   createPassword(password: string) {
     const salt = randomBytes(16).toString();
