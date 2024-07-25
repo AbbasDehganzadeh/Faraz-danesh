@@ -134,4 +134,3 @@ export class SectionService {
     );
     return tutorial;
   }
-}
