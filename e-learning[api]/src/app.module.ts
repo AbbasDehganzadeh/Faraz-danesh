@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import config from 'config';
 import { User } from './auth/entities/user.entity';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { User } from './auth/entities/user.entity';
       entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
       synchronize: true,
     }),
+    MongooseModule.forRoot('mongodb://localhost:27017/elearning'),
     AuthModule,
   ],
   controllers: [AppController],
