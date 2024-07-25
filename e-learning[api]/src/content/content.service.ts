@@ -11,10 +11,10 @@ export class ContentService {
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
   ) {}
   findCourses() {
-    return 'find courses';
+    return this.courseModel.find();
   }
-  getCourse() {
-    return 'get course';
+  getCourse(slug: string) {
+    return this.courseModel.findOne({ slug: slug });
   }
   createCourse() {
     return 'create course';
@@ -32,10 +32,10 @@ export class ContentService {
   }
 
   findTutorials() {
-    return 'find tutorials';
+    return this.TutorialModel.find();
   }
-  getTutorial() {
-    return 'get tutorial';
+  getTutorial(slug: string) {
+    return this.TutorialModel.findOne({ slug: slug });
   }
   createTutorial() {
     return 'create tutorial';

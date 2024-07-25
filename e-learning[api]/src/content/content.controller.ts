@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ContentService } from './content.service';
 
 @Controller('/api')
@@ -9,8 +9,8 @@ export class ContentController {
     return this.contentService.findCourses();
   }
   @Get('course/:slug')
-  getCourse() {
-    return this.contentService.getCourse();
+  getCourse(@Param('slug') slug: string) {
+    return this.contentService.getCourse(slug);
   }
   @Post('course')
   newCourse() {
@@ -34,8 +34,8 @@ export class ContentController {
     return this.contentService.findTutorials();
   }
   @Get('tutorial/:slug')
-  getTutorial() {
-    return this.contentService.getTutorial();
+  getTutorial(@Param('slug') slug: string) {
+    return this.contentService.getTutorial(slug);
   }
   @Post('tutorial')
   newTutorial() {
