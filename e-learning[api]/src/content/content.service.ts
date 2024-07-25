@@ -4,6 +4,19 @@ import { CourseDocument } from './schma/course.schma';
 import { TutorialDocument } from './schma/tutorial.schma';
 import { Model } from 'mongoose';
 
+interface ICourse {
+  name: string;
+  intro: string;
+  description: string;
+  teachers: number[];
+}
+
+interface ITutorial {
+  name: string;
+  description: string;
+  teachers: number[];
+}
+
 @Injectable()
 export class ContentService {
   constructor(
