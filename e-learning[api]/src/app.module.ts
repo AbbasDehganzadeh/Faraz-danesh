@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import config from 'config';
 import { User } from './auth/entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ContentModule } from './content/content.module';
 import { RedisModule } from './redisdb/redis.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { RedisModule } from './redisdb/redis.module';
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/elearning'),
     AuthModule,
+    ContentModule,
     RedisModule,
   ],
   controllers: [AppController],
