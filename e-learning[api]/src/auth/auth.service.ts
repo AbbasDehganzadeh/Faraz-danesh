@@ -37,9 +37,9 @@ export class AuthService {
   }
   async logIn(data: LoginUserDto) {
     const { username, password } = data;
-    const user = await this.validateUser(username, password);
+    const validuser = await this.validateUser(username, password);
 
-    if (user) {
+    if (validuser) {
       const token = this.createJwt(username);
       return { token };
     }
@@ -57,27 +57,37 @@ export class AuthService {
         return user;
       }
     }
-    return new HttpException(
+    throw new HttpException(
       'wrong username, or password',
       HttpStatus.BAD_REQUEST,
     );
   }
-  createJwt(username:string) {
-    return this.jwtService.sign({username},{secret: 'super secret'})
+  createJwt(username: string) {
+    return this.jwtService.sign({ username }, { secret: 'super secret' });
   }
   createPassword(password: string) {
     const salt = randomBytes(16).toString();
-    return this.encreptPassword(password, salt);
+    return this.encryptPassword(password, salt);
   }
-  encreptPassword(password: string, salt: string) {
+  encryptPassword(password: string, salt: string) {
     const hashed = scryptSync(password, salt, 64);
     return `${salt}:${hashed}`;
   }
   matchPassword(password: string, expectpassword: string) {
-    const [salt, _] = expectpassword.split(':');
-    const encpass = this.encreptPassword(password, salt);
-    const hashedpass = Buffer.from(encpass);
-    const expectedpass = Buffer.from(expectpassword);
-    return timingSafeEqual(hashedpass, expectedpass);
+    const [salt, key] = expectpassword.split(':');
+    const encpass = this.encryptPassword(password, salt);
+    const hashedpass = Buffer.from(encpass.split(':')[1]);
+    const expectedpass = Buffer.from(key);
+    console.debug(
+      hashedpass,
+      hashedpass.length,
+      expectedpass,
+      expectedpass.length,
+    );
+    if (
+      hashedpass.length === expectedpass.length &&
+      timingSafeEqual(hashedpass, expectedpass)
+    )
+      return true;
   }
 }
