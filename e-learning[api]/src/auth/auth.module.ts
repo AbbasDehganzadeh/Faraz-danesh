@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { JwtStategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -16,6 +16,7 @@ import { JwtStategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtService, JwtStategy],
+  providers: [AuthService, JwtService, JwtStrategy],
+  exports: [AuthService, JwtModule, JwtStrategy], //! remove it after authorization test;
 })
 export class AuthModule {}

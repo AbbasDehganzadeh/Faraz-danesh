@@ -1,10 +1,12 @@
 import { AuthService } from './auth.service';
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { LoginUserDto, SignupUserDto } from './dtos/user.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+  @UseGuards(AuthGuard('jwt'))
   @Get('me')
   getUser() {
     return this.authService.getUserById(1); //TODO: dynamic ID
