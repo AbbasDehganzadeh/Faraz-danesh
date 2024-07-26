@@ -1,5 +1,13 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ContentService } from './content.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ContentService, ICourse, ITutorial } from './content.service';
 
 @Controller('/api')
 export class ContentController {
@@ -13,8 +21,9 @@ export class ContentController {
     return this.contentService.getCourse(slug);
   }
   @Post('course')
-  newCourse() {
-    return this.contentService.createCourse();
+  newCourse(@Body() body: ICourse) {
+    console.debug({ body });
+    return this.contentService.createCourse(body);
   }
   @Put('course/:slug')
   updateCourse() {
@@ -38,8 +47,9 @@ export class ContentController {
     return this.contentService.getTutorial(slug);
   }
   @Post('tutorial')
-  newTutorial() {
-    return this.contentService.createTutorial();
+  newTutorial(@Body() body: ITutorial) {
+    console.debug({ body });
+    return this.contentService.createTutorial(body);
   }
   @Put('tutorial/:slug')
   updateTutorial() {
