@@ -4,14 +4,14 @@ import { CourseDocument } from './schma/course.schma';
 import { TutorialDocument } from './schma/tutorial.schma';
 import { Model } from 'mongoose';
 
-interface ICourse {
+export interface ICourse {
   name: string;
   intro: string;
   description: string;
   teachers: number[];
 }
 
-interface ITutorial {
+export interface ITutorial {
   name: string;
   description: string;
   teachers: number[];
@@ -29,8 +29,16 @@ export class ContentService {
   getCourse(slug: string) {
     return this.courseModel.findOne({ slug: slug });
   }
-  createCourse() {
-    return 'create course';
+  createCourse(data: ICourse) {
+    const slug = data.name; //? for simplicity,
+    const course = new this.courseModel({
+      slug,
+      name: data.name,
+      intro: data.intro,
+      description: data.description,
+      teachers: data.teachers,
+    });
+    return course.save();
   }
   updateCourse() {
     return 'update course';
@@ -50,8 +58,15 @@ export class ContentService {
   getTutorial(slug: string) {
     return this.TutorialModel.findOne({ slug: slug });
   }
-  createTutorial() {
-    return 'create tutorial';
+  createTutorial(data: ITutorial) {
+    const slug = data.name; //? for simplicity,
+    const tutorial = new this.TutorialModel({
+      slug,
+      name: data.name,
+      description: data.description,
+      teachers: data.teachers,
+    });
+    return tutorial.save();
   }
   updateTutorial() {
     return 'update tutorial';
