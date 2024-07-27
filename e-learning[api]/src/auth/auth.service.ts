@@ -4,8 +4,9 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { scryptSync, randomBytes, timingSafeEqual } from 'node:crypto';
 import { Buffer } from 'node:buffer';
-import { LoginUserDto, SignupUserDto } from './dtos/user.dto';
+import { LoginUserDto, ResponseUserDto, SignupUserDto } from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,13 @@ export class AuthService {
   async getUser(username: string) {
     const user = await this.users.findOne({ where: { uname: username } });
     return user;
+  }
+  async getMe(data: { username: string }) {
+    const user = await this.getUser(data.username);
+    const result = plainToClass(ResponseUserDto, user);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // const { password, ...result } = user;
+    return result;
   }
   signup(data: SignupUserDto) {
     const hashedpass = this.createPassword(data.password);
@@ -78,12 +86,6 @@ export class AuthService {
     const encpass = this.encryptPassword(password, salt);
     const hashedpass = Buffer.from(encpass.split(':')[1]);
     const expectedpass = Buffer.from(key);
-    console.debug(
-      hashedpass,
-      hashedpass.length,
-      expectedpass,
-      expectedpass.length,
-    );
     if (
       hashedpass.length === expectedpass.length &&
       timingSafeEqual(hashedpass, expectedpass)

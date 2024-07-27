@@ -1,3 +1,4 @@
+import { Exclude, Transform } from 'class-transformer';
 import {
   IsAlphanumeric,
   IsEmail,
@@ -33,4 +34,35 @@ export class LoginUserDto {
   @IsString()
   username: string;
   password: string;
+}
+
+export class ResponseUserDto extends SignupUserDto {
+  @Transform((val) => {
+    if (val !== null || val !== undefined) {
+      return '';
+    }
+    return val;
+  })
+  firstname: string;
+  @Transform((val) => {
+    if (val !== null || val !== undefined) {
+      return '';
+    }
+    return val;
+  })
+  lastname: string;
+  @Transform((val) => {
+    if (val !== null || val !== undefined) {
+      return '';
+    }
+    return val;
+  })
+  phone: string;
+  @Exclude()
+  password: string;
+  role: number;
+}
+
+export class RequestGetMeBodyDto {
+  //! Not implemented
 }
