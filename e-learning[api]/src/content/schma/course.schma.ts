@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { Comment } from './comments.schema';
 
 export type CourseDocument = HydratedDocument<Course>;
 
@@ -7,6 +8,15 @@ export type CourseDocument = HydratedDocument<Course>;
 class Course {
   @Prop()
   slug: string;
+
+  @Prop()
+  version?: string;
+
+  @Prop()
+  versions: string[];
+
+  @Prop({ type: Types.ObjectId, ref: 'tutorials' })
+  tutorialsId: Types.ObjectId;
 
   @Prop()
   name: string;
@@ -18,7 +28,22 @@ class Course {
   description: string;
 
   @Prop()
+  draft: boolean;
+
+  @Prop()
   teachers: number[];
+
+  @Prop()
+  price: number;
+
+  @Prop()
+  tags: string[];
+
+  @Prop({ type: Types.Decimal128 })
+  rate: number;
+
+  @Prop()
+  comments: Comment[];
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
