@@ -25,6 +25,7 @@ export class ContentController {
     console.debug({ body });
     return this.contentService.createCourse(body);
   }
+  // update the course by specified version
   @Put('course/:slug')
   updateCourse() {
     return this.contentService.updateCourse();
@@ -48,9 +49,14 @@ export class ContentController {
   }
   @Post('tutorial')
   newTutorial(@Body() body: ITutorial) {
-    console.debug({ body });
     return this.contentService.createTutorial(body);
   }
+  @Post('tutorial/:slug/section')
+  updateSection(@Param('slug') slug: string, @Body() body: any) {
+    console.debug({ body });
+    return this.contentService.AddSection(slug, body);
+  }
+  // update the tutorial by specified version
   @Put('tutorial/:slug')
   updateTutorial() {
     return this.contentService.updateTutorial();
