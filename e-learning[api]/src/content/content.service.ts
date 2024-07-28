@@ -40,6 +40,7 @@ export class ContentService {
     });
     return course.save();
   }
+  // update the course by specified version
   updateCourse() {
     return 'update course';
   }
@@ -68,6 +69,14 @@ export class ContentService {
     });
     return tutorial.save();
   }
+  AddSection(slug: string, data: any) {
+    const tutorial = this.TutorialModel.updateOne(
+      { slug: slug },
+      { section: data },
+    );
+    return tutorial.sort('section.priority', { override: false });
+  }
+  // update the tutorial by specified version
   updateTutorial() {
     return 'update tutorial';
   }

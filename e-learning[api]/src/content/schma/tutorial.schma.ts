@@ -23,6 +23,9 @@ class Tutorial {
   description: string;
 
   @Prop()
+  section: unknown[];
+
+  @Prop()
   draft: boolean;
 
   @Prop()
