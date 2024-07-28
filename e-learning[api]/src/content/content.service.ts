@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CourseDocument } from './schma/course.schma';
 import { TutorialDocument } from './schma/tutorial.schma';
@@ -76,6 +81,20 @@ export class ContentService {
     );
     return tutorial.sort('section.priority', { override: false });
   }
+  AddTextSection(slug: string, data: any) {
+    const tutorial = this.TutorialModel.updateOne(
+      { slug: slug },
+      { section: data },
+    );
+    return tutorial.sort('section.priority', { override: false });
+  }
+  AddFileSection() {
+    throw new HttpException(
+      'uploading file is not implemented',
+      HttpStatus.NOT_IMPLEMENTED,
+    );
+  }
+
   // update the tutorial by specified version
   updateTutorial() {
     return 'update tutorial';
