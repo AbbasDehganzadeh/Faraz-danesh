@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ContentController } from './content.controller';
-import { ContentService } from './content.service';
+import {
+  CourseService,
+  SectionService,
+  TutorialService,
+} from './content.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CourseSchema } from './schma/course.schma';
 import { TutorialSchema } from './schma/tutorial.schma';
@@ -29,6 +33,6 @@ import {
     ]),
   ],
   controllers: [ContentController],
-  providers: [ContentService],
+  providers: [CourseService, SectionService, TutorialService],
 })
 export class ContentModule {}
