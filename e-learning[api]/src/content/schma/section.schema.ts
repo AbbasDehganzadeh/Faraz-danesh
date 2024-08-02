@@ -24,14 +24,15 @@ export class Section {
   @Prop()
   version: string;
 
-  @Prop({})
+  @Prop()
   priority: number;
 }
 
 @Schema({ _id: false })
 export class TextSection {
-  @Prop({ enum: SectionType })
   kind: SectionType;
+  version: string;
+  priority: number;
 
   @Prop()
   text: string;
@@ -39,8 +40,9 @@ export class TextSection {
 
 @Schema({ _id: false })
 export class ImageSection {
-  @Prop({ enum: SectionType })
   kind: SectionType;
+  version: string;
+  priority: number;
 
   @Prop({ enum: ImageType })
   type: ImageType;
@@ -63,8 +65,9 @@ export class ImageSection {
 
 @Schema({ _id: false })
 export class VideoSection {
-  @Prop({ enum: SectionType })
   kind: SectionType;
+  version: string;
+  priority: number;
 
   @Prop({ enum: VideoType })
   type: VideoType;
