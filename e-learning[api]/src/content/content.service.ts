@@ -23,10 +23,9 @@ export interface ITutorial {
 }
 
 @Injectable()
-export class ContentService {
+export class CourseService {
   constructor(
     @InjectModel('courses') private courseModel: Model<CourseDocument>,
-    @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
   ) {}
   findCourses() {
     return this.courseModel.find();
@@ -57,7 +56,12 @@ export class ContentService {
   archiveCourse() {
     return 'archive course';
   }
-
+}
+@Injectable()
+export class TutorialService {
+  constructor(
+    @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
+  ) {}
   findTutorials() {
     return this.TutorialModel.find();
   }
@@ -74,27 +78,6 @@ export class ContentService {
     });
     return tutorial.save();
   }
-  AddSection(slug: string, data: any) {
-    const tutorial = this.TutorialModel.updateOne(
-      { slug: slug },
-      { section: data },
-    );
-    return tutorial.sort('section.priority', { override: false });
-  }
-  AddTextSection(slug: string, data: any) {
-    const tutorial = this.TutorialModel.updateOne(
-      { slug: slug },
-      { section: data },
-    );
-    return tutorial.sort('section.priority', { override: false });
-  }
-  AddFileSection() {
-    throw new HttpException(
-      'uploading file is not implemented',
-      HttpStatus.NOT_IMPLEMENTED,
-    );
-  }
-
   // update the tutorial by specified version
   updateTutorial() {
     return 'update tutorial';
@@ -106,5 +89,37 @@ export class ContentService {
   //TODO makeArchive [generic function]
   archiveTutorial() {
     return 'archive tutorial';
+  }
+}
+
+@Injectable()
+export class SectionService {
+  constructor(
+    @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
+    @InjectModel('text') private texttSection: Model<TextSection>,
+  ) {}
+
+  AddSection(slug: string, data: any) {
+    const tutorial = this.TutorialModel.findOneAndUpdate(
+      { slug: slug },
+      { section: data },
+    );
+
+    return tutorial.sort('section.priority', { override: false });
+  }
+  AddTextSection(slug: string, data: any) {
+    const tutorial = this.TutorialModel.findOneAndUpdate(
+      { slug: slug },
+      { $push: { section: data } },
+    );
+    // tutorial.section.push(section);
+    // return tutorial.sort('section.priority', { override: false });
+    return tutorial;
+  }
+  AddFileSection() {
+    throw new HttpException(
+      'uploading file is not implemented',
+      HttpStatus.NOT_IMPLEMENTED,
+    );
   }
 }
