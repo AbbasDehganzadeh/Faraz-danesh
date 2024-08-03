@@ -6,7 +6,7 @@ import {
   Param,
   Post,
   Put,
-  UploadedFiles,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -68,25 +68,25 @@ export class ContentController {
     console.debug({ body });
     return this.sectionService.AddTextSection(slug, body);
   }
-  @UseInterceptors(FileInterceptor('images', { dest: __dirname + 'Images' }))
+  @UseInterceptors(FileInterceptor('image', { dest: 'Images' }))
   @Post('tutorial/:slug/image')
   updateImageSection(
     @Param('slug') slug: string,
     @Body() body: any,
-    @UploadedFiles() files: any,
+    @UploadedFile() file: any,
   ) {
-    console.debug({ slug, body, files });
-    return this.sectionService.AddFileSection();
+    console.debug({ slug, body, file });
+    return this.sectionService.AddFileSection(slug, body, file);
   }
-  @UseInterceptors(FileInterceptor('videos'))
+  @UseInterceptors(FileInterceptor('video', { dest: 'Videos' }))
   @Post('tutorial/:slug/video')
   updateVideoSection(
     @Param('slug') slug: string,
     @Body() body: any,
-    @UploadedFiles() files: any,
+    @UploadedFile() file: any,
   ) {
-    console.debug({ slug, body, files });
-    return this.sectionService.AddFileSection();
+    console.debug({ slug, body, file });
+    return this.sectionService.AddFileSection(slug, body, file);
   }
   // update the tutorial by specified version
   @Put('tutorial/:slug')

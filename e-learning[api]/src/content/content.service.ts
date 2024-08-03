@@ -1,3 +1,4 @@
+import { TextSection } from './schma/section.schema';
 import {
   HttpCode,
   HttpException,
@@ -108,18 +109,22 @@ export class SectionService {
     return tutorial.sort('section.priority', { override: false });
   }
   AddTextSection(slug: string, data: any) {
+    const section = new this.texttSection(data);
+    console.debug({ section });
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { $push: { section: data } },
+      { $push: { section: section } },
     );
-    // tutorial.section.push(section);
-    // return tutorial.sort('section.priority', { override: false });
     return tutorial;
   }
-  AddFileSection() {
-    throw new HttpException(
-      'uploading file is not implemented',
-      HttpStatus.NOT_IMPLEMENTED,
+  AddFileSection(slug: string, data: any, file: any) {
+    // doing some stuff with data
+    data.path = file.filename;
+
+    const tutorial = this.TutorialModel.findOneAndUpdate(
+      { slug: slug },
+      { $push: { section: { data } } },
     );
+    return tutorial;
   }
 }
