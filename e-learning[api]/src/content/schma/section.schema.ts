@@ -29,21 +29,13 @@ export class Section {
 }
 
 @Schema({ _id: false })
-export class TextSection {
-  kind: SectionType;
-  version: string;
-  priority: number;
-
+export class TextSection extends Section {
   @Prop()
   text: string;
 }
 
 @Schema({ _id: false })
-export class ImageSection {
-  kind: SectionType;
-  version: string;
-  priority: number;
-
+export class ImageSection extends Section {
   @Prop({ enum: ImageType })
   type: ImageType;
 
@@ -64,11 +56,7 @@ export class ImageSection {
 }
 
 @Schema({ _id: false })
-export class VideoSection {
-  kind: SectionType;
-  version: string;
-  priority: number;
-
+export class VideoSection extends Section {
   @Prop({ enum: VideoType })
   type: VideoType;
 
