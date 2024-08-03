@@ -9,14 +9,15 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   CourseService,
-  ICourse,
-  ITutorial,
   SectionService,
   TutorialService,
 } from './content.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { ICourse } from './intefaces/course.interface';
+import { ITutorial } from './intefaces/tutorial.interface';
+
 @Controller('/api')
 export class ContentController {
   constructor(
@@ -73,7 +74,7 @@ export class ContentController {
   updateImageSection(
     @Param('slug') slug: string,
     @Body() body: any,
-    @UploadedFile() file: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     console.debug({ slug, body, file });
     return this.sectionService.AddFileSection(slug, body, file);
@@ -83,7 +84,7 @@ export class ContentController {
   updateVideoSection(
     @Param('slug') slug: string,
     @Body() body: any,
-    @UploadedFile() file: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     console.debug({ slug, body, file });
     return this.sectionService.AddFileSection(slug, body, file);
