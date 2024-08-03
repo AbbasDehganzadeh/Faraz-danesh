@@ -9,19 +9,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CourseDocument } from './schma/course.schma';
 import { TutorialDocument } from './schma/tutorial.schma';
 import { Model } from 'mongoose';
-
-export interface ICourse {
-  name: string;
-  intro: string;
-  description: string;
-  teachers: number[];
-}
-
-export interface ITutorial {
-  name: string;
-  description: string;
-  teachers: number[];
-}
+import { ICourse } from './intefaces/course.interface';
+import { ITutorial } from './intefaces/tutorial.interface';
 
 @Injectable()
 export class CourseService {
@@ -117,9 +106,10 @@ export class SectionService {
     );
     return tutorial;
   }
-  AddFileSection(slug: string, data: any, file: any) {
+  AddFileSection(slug: string, data: any, file: Express.Multer.File) {
     // doing some stuff with data
     data.path = file.filename;
+    data.size = file.size;
 
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
