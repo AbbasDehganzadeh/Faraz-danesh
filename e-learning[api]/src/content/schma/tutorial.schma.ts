@@ -10,13 +10,13 @@ class Tutorial {
   @Prop()
   slug: string;
 
-  @Prop()
+  @Prop({ required: true })
   version?: string;
 
   @Prop()
   versions: string[];
 
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
   @Prop()
