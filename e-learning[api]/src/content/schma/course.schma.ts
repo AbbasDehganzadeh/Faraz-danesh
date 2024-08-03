@@ -9,7 +9,7 @@ class Course {
   @Prop()
   slug: string;
 
-  @Prop()
+  @Prop({ required: true })
   version?: string;
 
   @Prop()
@@ -18,7 +18,7 @@ class Course {
   @Prop({ type: Types.ObjectId, ref: 'tutorials' })
   tutorialsId: Types.ObjectId;
 
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
   @Prop()
