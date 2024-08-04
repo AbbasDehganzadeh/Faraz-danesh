@@ -21,7 +21,7 @@ export class Section {
   @Prop({ enum: SectionType })
   kind: SectionType;
 
-  @Prop()
+  @Prop({ match: /\d{2}-\d{4}/ })
   version: string;
 
   @Prop()
