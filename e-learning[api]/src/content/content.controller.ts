@@ -17,6 +17,7 @@ import {
 } from './content.service';
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
+import { IFileSection, ITextSection } from './intefaces/section.interface';
 
 @Controller('/api')
 export class ContentController {
@@ -65,7 +66,7 @@ export class ContentController {
     return this.tutorialService.createTutorial(body);
   }
   @Post('tutorial/:slug/section')
-  updateSection(@Param('slug') slug: string, @Body() body: any) {
+  updateSection(@Param('slug') slug: string, @Body() body: ITextSection) {
     console.debug({ body });
     return this.sectionService.AddTextSection(slug, body);
   }
@@ -73,7 +74,7 @@ export class ContentController {
   @Post('tutorial/:slug/image')
   updateImageSection(
     @Param('slug') slug: string,
-    @Body() body: any,
+    @Body() body: IFileSection,
     @UploadedFile() file: Express.Multer.File,
   ) {
     console.debug({ slug, body, file });
@@ -83,7 +84,7 @@ export class ContentController {
   @Post('tutorial/:slug/video')
   updateVideoSection(
     @Param('slug') slug: string,
-    @Body() body: any,
+    @Body() body: IFileSection,
     @UploadedFile() file: Express.Multer.File,
   ) {
     console.debug({ slug, body, file });
