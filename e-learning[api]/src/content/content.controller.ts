@@ -45,8 +45,12 @@ export class ContentController {
     return this.courseService.updateCourse();
   }
   @Put('course/:slug/publish')
-  publishCourse() {
-    return this.courseService.updateCourse();
+  publishCourse(@Param('slug') slug: string) {
+    return this.courseService.publishCourse(slug);
+  }
+  @Put('course/:slug/draft')
+  draftCourse(@Param('slug') slug: string) {
+    return this.courseService.draftCourse(slug);
   }
   @Delete('course/:slug/archive')
   archiveCourse() {
@@ -96,8 +100,12 @@ export class ContentController {
     return this.tutorialService.updateTutorial();
   }
   @Put('tutorial/:slug/publish')
-  publishTutorial() {
-    return this.tutorialService.publishTutorial();
+  publishTutorial(@Param('slug') slug: string) {
+    return this.tutorialService.publishTutorial(slug);
+  }
+  @Put('tutorial/:slug/draft')
+  draftTutorial(@Param('slug') slug: string) {
+    return this.tutorialService.draftTutorial(slug);
   }
   @Delete('tutorial/:slug/archive')
   archiveTutorial() {

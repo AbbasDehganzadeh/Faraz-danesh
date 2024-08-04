@@ -43,8 +43,12 @@ export class CourseService {
     return 'update course';
   }
   //TODO makePublish [generic function]
-  publishCourse() {
-    return 'publish course';
+  publishCourse(slug: string) {
+    return this.courseModel.findOneAndUpdate({ slug: slug }, { draft: false });
+  }
+  //TODO makeDraft [generic function]
+  draftCourse(slug: string) {
+    return this.courseModel.findOneAndUpdate({ slug: slug }, { draft: true });
   }
   //TODO makeArchive [generic function]
   archiveCourse() {
@@ -80,8 +84,15 @@ export class TutorialService {
     return 'update tutorial';
   }
   //TODO makePublish [generic function]
-  publishTutorial() {
-    return 'publish tutorial';
+  publishTutorial(slug: string) {
+    return this.TutorialModel.findOneAndUpdate(
+      { slug: slug },
+      { draft: false },
+    );
+  }
+  //TODO makeDraft [generic function]
+  draftTutorial(slug: string) {
+    return this.TutorialModel.findOneAndUpdate({ slug: slug }, { draft: true });
   }
   //TODO makeArchive [generic function]
   archiveTutorial() {
@@ -108,7 +119,7 @@ export class SectionService {
     // const section = new this.texttSection(data);
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { $push: { section:  data } },
+      { $push: { section: data } },
     );
     return tutorial;
   }
