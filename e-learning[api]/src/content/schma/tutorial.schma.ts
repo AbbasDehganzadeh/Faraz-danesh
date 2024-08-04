@@ -11,7 +11,7 @@ class Tutorial {
   slug: string;
 
   @Prop({ required: true })
-  version?: string;
+  version: string;
 
   @Prop()
   versions: string[];
@@ -22,10 +22,11 @@ class Tutorial {
   @Prop()
   description: string;
 
+  //TODO make the Type specific!!
   @Prop()
   section: unknown[];
 
-  @Prop()
+  @Prop({ default: true })
   draft: boolean;
 
   @Prop()
