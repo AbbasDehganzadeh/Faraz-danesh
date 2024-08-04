@@ -11,6 +11,7 @@ import { TutorialDocument } from './schma/tutorial.schma';
 import { Model } from 'mongoose';
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
+import { IFileSection, ITextSection } from './intefaces/section.interface';
 
 @Injectable()
 export class CourseService {
@@ -28,9 +29,12 @@ export class CourseService {
     const course = new this.courseModel({
       slug,
       name: data.name,
+      version: data.version,
       intro: data.intro,
       description: data.description,
       teachers: data.teachers,
+      price: data.price,
+      tags: data.tags,
     });
     return course.save();
   }
@@ -63,8 +67,11 @@ export class TutorialService {
     const tutorial = new this.TutorialModel({
       slug,
       name: data.name,
+      version: data.version,
       description: data.description,
       teachers: data.teachers,
+      price: data.price,
+      tags: data.tags,
     });
     return tutorial.save();
   }
@@ -97,23 +104,22 @@ export class SectionService {
 
     return tutorial.sort('section.priority', { override: false });
   }
-  AddTextSection(slug: string, data: any) {
-    const section = new this.texttSection(data);
-    console.debug({ section });
+  AddTextSection(slug: string, data: ITextSection) {
+    // const section = new this.texttSection(data);
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { $push: { section: section } },
+      { $push: { section:  data } },
     );
     return tutorial;
   }
-  AddFileSection(slug: string, data: any, file: Express.Multer.File) {
+  AddFileSection(slug: string, data: IFileSection, file: Express.Multer.File) {
     // doing some stuff with data
-    data.path = file.filename;
-    data.size = file.size;
+    const path = file.filename;
+    const size = file.size;
 
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { $push: { section: { data } } },
+      { $push: { section: { ...data, path, size } } },
     );
     return tutorial;
   }
