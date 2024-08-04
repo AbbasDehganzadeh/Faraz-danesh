@@ -9,7 +9,7 @@ class Course {
   @Prop()
   slug: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, match: /\d{2}-\d{4}/ })
   version: string;
 
   @Prop()
