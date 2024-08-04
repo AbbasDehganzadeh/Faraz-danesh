@@ -40,7 +40,7 @@ export class AuthService {
     });
     this.users.save(user);
 
-    const token = this.createJwt(user.uname);
+    const token = this.createJwt(user.uname, user.role);
     return { token };
   }
   async logIn(data: LoginUserDto) {
@@ -48,7 +48,7 @@ export class AuthService {
     const validuser = await this.validateUser(username, password);
 
     if (validuser) {
-      const token = this.createJwt(username);
+      const token = this.createJwt(username, validuser.role);
       return { token };
     }
   }
@@ -70,8 +70,8 @@ export class AuthService {
       HttpStatus.BAD_REQUEST,
     );
   }
-  createJwt(username: string) {
-    return this.jwtService.sign({ username }, { secret: 'super secret' });
+  createJwt(username: string, role: 0 | 1| 2) {
+    return this.jwtService.sign({ username,role }, { secret: 'super secret' });
   }
   createPassword(password: string) {
     const salt = randomBytes(16).toString();
