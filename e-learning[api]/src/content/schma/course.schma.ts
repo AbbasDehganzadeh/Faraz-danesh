@@ -10,7 +10,7 @@ class Course {
   slug: string;
 
   @Prop({ required: true })
-  version?: string;
+  version: string;
 
   @Prop()
   versions: string[];
@@ -27,7 +27,7 @@ class Course {
   @Prop()
   description: string;
 
-  @Prop()
+  @Prop({ default: true })
   draft: boolean;
 
   @Prop()
