@@ -1,27 +1,42 @@
 import { AuthService } from './auth.service';
-import { Controller, Delete, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { LoginUserDto, ResponseUserDto, SignupUserDto } from './dtos/user.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private authservice: AuthService) {}
+  constructor(private authService: AuthService) {}
+
+  @UseGuards(AuthGuard('jwt'))
   @Get('me')
-  getUser() {
-    return this.authservice.getUser();
+  getUser(@Req() req: any): Promise<ResponseUserDto> {
+    const { user } = req;
+    console.info({ user });
+    return this.authService.getMe(user); //TODO: dynamic ID base on jwt token
   }
-  @Post('register')
-  register() {
-    return this.authservice.register();
+  @Post('signup')
+  signup(@Body() body: SignupUserDto) {
+    return this.authService.signup(body);
   }
   @Post('login')
-  logIn() {
-    return this.authservice.logIn();
+  logIn(@Body() body: LoginUserDto) {
+    // const [username, password] = body;
+    return this.authService.logIn(body);
   }
   @Post('refresh')
   refresh() {
-    return this.authservice.refreshToken();
+    return this.authService.refreshToken();
   }
   @Delete('logout')
   logOut() {
-    return this.authservice.logOut();
+    return this.authService.logOut();
   }
 }
