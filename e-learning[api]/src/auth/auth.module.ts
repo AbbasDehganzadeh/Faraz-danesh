@@ -6,6 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
+// import { RolesGuard } from './decorators/roles.guard';
+// import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -16,7 +18,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtService, JwtStrategy],
+  providers: [
+    AuthService,
+    JwtService,
+    JwtStrategy,
+    // { provide: APP_GUARD, useClass: RolesGuard }, //? It shoudn't be commented
+  ],
   exports: [AuthService, JwtModule, JwtStrategy], //! remove it after authorization test;
 })
 export class AuthModule {}

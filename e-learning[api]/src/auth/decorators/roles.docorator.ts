@@ -1,3 +1,3 @@
 import { SetMetadata } from '@nestjs/common';
 
-export const Roles = (...args: string[]) => SetMetadata('roles', args);
+export const Roles = (...args: number[]) => SetMetadata('roles', args);

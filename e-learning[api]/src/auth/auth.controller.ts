@@ -10,12 +10,16 @@ import {
 } from '@nestjs/common';
 import { LoginUserDto, ResponseUserDto, SignupUserDto } from './dtos/user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard, roles } from './decorators/roles.guard';
+import { Roles } from './decorators/roles.docorator';
+import { Reflector } from '@nestjs/core';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  @Roles(roles.Student, roles.Teacher, roles.Supervisor)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Get('me')
   getUser(@Req() req: any): Promise<ResponseUserDto> {
     const { user } = req;
