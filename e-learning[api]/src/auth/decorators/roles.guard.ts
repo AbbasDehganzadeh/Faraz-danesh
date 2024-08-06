@@ -2,18 +2,13 @@ import { Reflector } from '@nestjs/core';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Roles } from './roles.docorator';
-
-export enum roles {
-  Student = 0,
-  Teacher,
-  Supervisor,
-}
+import { roles } from '../roles.enum';
 
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
   canActivate(context: ExecutionContext): boolean | Promise<boolean> {
     // console.log({ refl: this.reflector });
-    const roles = this.reflector.getAllAndOverride<(typeof Roles)[]>('roles', [
+    const roles = this.reflector.getAllAndOverride<roles[]>('roles', [
       context.getHandler(),
       context.getClass(),
     ]);

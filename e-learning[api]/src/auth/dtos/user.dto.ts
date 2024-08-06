@@ -7,6 +7,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { roles } from '../roles.enum';
 
 export class SignupUserDto {
   @IsString()
@@ -60,7 +61,7 @@ export class ResponseUserDto extends SignupUserDto {
   phone: string;
   @Exclude()
   password: string;
-  role: number;
+  role: roles;
 }
 
 export class RequestGetMeBodyDto {

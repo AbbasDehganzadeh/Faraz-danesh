@@ -1,3 +1,4 @@
+import { Reflector } from '@nestjs/core';
 import { AuthService } from './auth.service';
 import {
   Body,
@@ -10,15 +11,15 @@ import {
 } from '@nestjs/common';
 import { LoginUserDto, ResponseUserDto, SignupUserDto } from './dtos/user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard, roles } from './decorators/roles.guard';
+import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
-import { Reflector } from '@nestjs/core';
+import { roles } from './roles.enum';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Roles(roles.Student, roles.Teacher, roles.Supervisor)
+  @Roles(roles.STUDENT, roles.TEACHER, roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Get('me')
   getUser(@Req() req: any): Promise<ResponseUserDto> {
