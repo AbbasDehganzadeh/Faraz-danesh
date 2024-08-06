@@ -7,6 +7,7 @@ import { Buffer } from 'node:buffer';
 import { LoginUserDto, ResponseUserDto, SignupUserDto } from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { plainToClass } from 'class-transformer';
+import { roles } from './roles.enum';
 
 @Injectable()
 export class AuthService {
@@ -52,6 +53,15 @@ export class AuthService {
       return { token };
     }
   }
+  signUpStaff() {
+    return 'signup staff';
+  }
+  setApiKey() {
+    return 'api-key set';
+  }
+  getApiKey() {
+    return 'api-key get';
+  }
   refreshToken() {
     return 'tokens are created';
   }
@@ -70,8 +80,8 @@ export class AuthService {
       HttpStatus.BAD_REQUEST,
     );
   }
-  createJwt(username: string, role: 0 | 1| 2) {
-    return this.jwtService.sign({ username,role }, { secret: 'super secret' });
+  createJwt(username: string, role: roles) {
+    return this.jwtService.sign({ username, role }, { secret: 'super secret' });
   }
   createPassword(password: string) {
     const salt = randomBytes(16).toString();

@@ -36,6 +36,20 @@ export class AuthController {
     // const [username, password] = body;
     return this.authService.logIn(body);
   }
+  @Post('signup/tutor')
+  tutorSignup() {
+    return this.authService.signUpStaff();
+  }
+  @Post('signup/visor')
+  visorSignup() {
+    return this.authService.signUpStaff();
+  }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
+  @Post('key')
+  setApiKey() {
+    return this.authService.setApiKey();
+  }
   @Post('refresh')
   refresh() {
     return this.authService.refreshToken();
