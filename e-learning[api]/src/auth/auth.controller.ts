@@ -9,7 +9,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { LoginUserDto, ResponseUserDto, SignupUserDto } from './dtos/user.dto';
+import {
+  LoginUserDto,
+  ResponseUserDto,
+  SignupStaffDto,
+  SignupUserDto,
+} from './dtos/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
@@ -37,18 +42,19 @@ export class AuthController {
     return this.authService.logIn(body);
   }
   @Post('signup/tutor')
-  tutorSignup() {
-    return this.authService.signUpStaff();
+  tutorSignup(@Body() body: SignupStaffDto) {
+    return this.authService.signUpStaff(body);
   }
   @Post('signup/visor')
-  visorSignup() {
-    return this.authService.signUpStaff();
+  visorSignup(@Body() body: SignupStaffDto) {
+    return this.authService.signUpStaff(body);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('key')
-  setApiKey() {
-    return this.authService.setApiKey();
+  setApiKey(@Req() req: any, @Body() body: { tutor: string }) {
+    const { user } = req;
+    return this.authService.setApiKey(user.username, body.tutor);
   }
   @Post('refresh')
   refresh() {

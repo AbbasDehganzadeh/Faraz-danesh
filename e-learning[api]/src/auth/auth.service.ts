@@ -2,18 +2,31 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { scryptSync, randomBytes, timingSafeEqual } from 'node:crypto';
+import {
+  createHmac,
+  scryptSync,
+  randomBytes,
+  timingSafeEqual,
+} from 'node:crypto';
 import { Buffer } from 'node:buffer';
-import { LoginUserDto, ResponseUserDto, SignupUserDto } from './dtos/user.dto';
+import {
+  LoginUserDto,
+  ResponseUserDto,
+  SignupUserDto,
+  SignupStaffDto,
+} from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { plainToClass } from 'class-transformer';
 import { roles } from './roles.enum';
+import { RedisService } from 'src/redisdb/redis.service';
 
+const KEY_SECRET = 'KEY_SECRET';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private users: Repository<User>,
     private jwtService: JwtService,
+    private redisService: RedisService,
   ) {}
   async getUserById(id: number) {
     const user = await this.users.findOneBy({ id });
@@ -53,11 +66,19 @@ export class AuthService {
       return { token };
     }
   }
-  signUpStaff() {
+  signUpStaff(data: SignupStaffDto) {
     return 'signup staff';
   }
-  setApiKey() {
-    return 'api-key set';
+  setApiKey(supervisor: string, tutor: string) {
+    const key = `$SUStaff:${supervisor}:${tutor}`;
+    const message = `${supervisor}:${tutor}_${new Date()}`;
+    const token = this.encryptMessage(message);
+    // save to Redis
+    this.redisService
+      .set(key, message)
+      .then((value) => console.debug(`${message}: ${value}`))
+      .catch((err) => console.error('DBERR:', err));
+    return token;
   }
   getApiKey() {
     return 'api-key get';
@@ -80,6 +101,13 @@ export class AuthService {
       HttpStatus.BAD_REQUEST,
     );
   }
+
+  encryptMessage(message: string) {
+    const cipher = createHmac('sha512', KEY_SECRET);
+    cipher.update(message);
+    return cipher.digest('base64');
+  }
+
   createJwt(username: string, role: roles) {
     return this.jwtService.sign({ username, role }, { secret: 'super secret' });
   }

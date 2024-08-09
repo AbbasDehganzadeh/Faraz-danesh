@@ -143,3 +143,4 @@ export class ContentController {
   archiveTutorial() {
     return this.tutorialService.archiveTutorial();
   }
+}
