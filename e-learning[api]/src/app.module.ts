@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -19,7 +19,9 @@ import { RedisModule } from './redisdb/redis.module';
       entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
       synchronize: true,
     }),
-    MongooseModule.forRoot('mongodb://localhost:27017/elearning'),
+    MongooseModule.forRootAsync({useFactory:(config: ConfigService)=>(
+      {uri:'mongodb://localhost:27017/elearning'}
+    ),}),
     AuthModule,
     ContentModule,
     RedisModule,
