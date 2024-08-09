@@ -5,6 +5,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Req,
   UseGuards,
@@ -42,12 +44,22 @@ export class AuthController {
     return this.authService.logIn(body);
   }
   @Post('signup/tutor')
-  tutorSignup() {
-    return this.authService.signUpStaff();
+  async tutorSignup(@Body() body: SignupStaffDto) {
+    const user = await this.authService.signUpStaff(body);
+    if (!user) {
+      throw new HttpException('token is invalid', HttpStatus.UNAUTHORIZED);
+    }
+    user.role = roles.TEACHER;
+    return this.authService.signup(user);
   }
   @Post('signup/visor')
-  visorSignup() {
-    return this.authService.signUpStaff();
+  async visorSignup(@Body() body: SignupStaffDto) {
+    const user = await this.authService.signUpStaff(body);
+    if (!user) {
+      throw new HttpException('token is invalid', HttpStatus.UNAUTHORIZED);
+    }
+    user.role = roles.SUPERVISOR;
+    return this.authService.signup(user);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
