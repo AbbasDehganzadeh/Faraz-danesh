@@ -70,14 +70,12 @@ export class AuthService {
     const { supervisorName, supervisorKey, ...user } = data;
     const key = `$SUStaff:${supervisorName}:${user.username}`;
     // fetch from redis
-    const token = await this.redisService.get(key);
-    if (!token) {
+    const message = await this.redisService.get(key);
+    console.log({ key: supervisorKey, message });
+    if (!message) {
       return null;
     }
-    if (
-      supervisorKey.length === token.length &&
-      timingSafeEqual(Buffer.from(supervisorKey), Buffer.from(token))
-    ) {
+    if (this.matchKeys(message, supervisorKey)) {
       return user;
     }
     return null;
@@ -117,7 +115,16 @@ export class AuthService {
     cipher.update(message);
     return cipher.digest('base64');
   }
-
+  matchKeys(payload: string, token: string) {
+    const key = this.encryptMessage(payload);
+    if (
+      key.length === token.length &&
+      timingSafeEqual(Buffer.from(key), Buffer.from(token))
+    ) {
+      return true;
+    }
+    return false;
+  }
   createJwt(username: string, role: roles) {
     return this.jwtService.sign({ username, role }, { secret: 'super secret' });
   }
