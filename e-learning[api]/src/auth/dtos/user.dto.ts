@@ -2,6 +2,7 @@ import { Exclude, Transform } from 'class-transformer';
 import {
   IsAlphanumeric,
   IsEmail,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -35,6 +36,15 @@ export class LoginUserDto {
   @IsString()
   username: string;
   password: string;
+}
+
+export class SignupStaffDto extends SignupUserDto {
+  @IsString()
+  @IsNotEmpty()
+  supervisorName: string;
+  @IsString()
+  @IsNotEmpty()
+  supervisorKey: string;
 }
 
 export class ResponseUserDto extends SignupUserDto {
