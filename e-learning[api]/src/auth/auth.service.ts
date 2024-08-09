@@ -13,7 +13,6 @@ import {
   LoginUserDto,
   ResponseUserDto,
   SignupUserDto,
-  SignupStaffDto,
 } from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { plainToClass } from 'class-transformer';
@@ -66,18 +65,19 @@ export class AuthService {
       return { token };
     }
   }
-  signUpStaff(data: SignupStaffDto) {
+  signUpStaff() {
     return 'signup staff';
   }
   setApiKey(supervisor: string, tutor: string) {
     const key = `$SUStaff:${supervisor}:${tutor}`;
-    const message = `${supervisor}:${tutor}_${new Date()}`;
+    const message = `${supervisor}:${tutor}_${Date()}`;
     const token = this.encryptMessage(message);
     // save to Redis
     this.redisService
       .set(key, message)
       .then((value) => console.debug(`${message}: ${value}`))
       .catch((err) => console.error('DBERR:', err));
+      
     return token;
   }
   getApiKey() {

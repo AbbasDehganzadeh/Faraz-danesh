@@ -42,12 +42,12 @@ export class AuthController {
     return this.authService.logIn(body);
   }
   @Post('signup/tutor')
-  tutorSignup(@Body() body: SignupStaffDto) {
-    return this.authService.signUpStaff(body);
+  tutorSignup() {
+    return this.authService.signUpStaff();
   }
   @Post('signup/visor')
-  visorSignup(@Body() body: SignupStaffDto) {
-    return this.authService.signUpStaff(body);
+  visorSignup() {
+    return this.authService.signUpStaff();
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
