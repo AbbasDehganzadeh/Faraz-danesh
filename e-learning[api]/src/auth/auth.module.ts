@@ -16,7 +16,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtService, JwtStrategy],
+  providers: [
+    AuthService,
+    JwtService,
+    JwtStrategy,
+    // { provide: APP_GUARD, useClass: RolesGuard }, //? It shoudn't be commented
+  ],
   exports: [AuthService, JwtModule, JwtStrategy], //! remove it after authorization test;
 })
 export class AuthModule {}

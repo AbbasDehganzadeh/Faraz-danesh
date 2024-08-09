@@ -2,11 +2,13 @@ import { Exclude, Transform } from 'class-transformer';
 import {
   IsAlphanumeric,
   IsEmail,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { roles } from '../roles.enum';
 
 export class SignupUserDto {
   @IsString()
@@ -28,12 +30,23 @@ export class SignupUserDto {
   @IsAlphanumeric()
   @MinLength(8)
   password: string;
+
+  readonly role: roles;
 }
 
 export class LoginUserDto {
   @IsString()
   username: string;
   password: string;
+}
+
+export class SignupStaffDto extends SignupUserDto {
+  @IsString()
+  @IsNotEmpty()
+  supervisorName: string;
+  @IsString()
+  @IsNotEmpty()
+  supervisorKey: string;
 }
 
 export class ResponseUserDto extends SignupUserDto {
@@ -60,7 +73,7 @@ export class ResponseUserDto extends SignupUserDto {
   phone: string;
   @Exclude()
   password: string;
-  role: number;
+  role: roles;
 }
 
 export class RequestGetMeBodyDto {

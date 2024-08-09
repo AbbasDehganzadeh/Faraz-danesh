@@ -1,3 +1,4 @@
+import { Reflector } from '@nestjs/core';
 import {
   Body,
   Controller,
@@ -7,9 +8,11 @@ import {
   Post,
   Put,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
 import {
   CourseService,
   SectionService,
@@ -18,6 +21,9 @@ import {
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
+import { RolesGuard } from 'src/auth/decorators/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.docorator';
+import { roles } from 'src/auth/roles.enum';
 
 @Controller('/api')
 export class ContentController {
@@ -34,24 +40,34 @@ export class ContentController {
   getCourse(@Param('slug') slug: string) {
     return this.courseService.getCourse(slug);
   }
+  @Roles(roles.TEACHER)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('course')
   newCourse(@Body() body: ICourse) {
     console.debug({ body });
     return this.courseService.createCourse(body);
   }
   // update the course by specified version
+  @Roles(roles.TEACHER)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('course/:slug')
   updateCourse() {
     return this.courseService.updateCourse();
   }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('course/:slug/publish')
   publishCourse(@Param('slug') slug: string) {
     return this.courseService.publishCourse(slug);
   }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('course/:slug/draft')
   draftCourse(@Param('slug') slug: string) {
     return this.courseService.draftCourse(slug);
   }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Delete('course/:slug/archive')
   archiveCourse() {
     return this.courseService.archiveCourse();
@@ -65,15 +81,21 @@ export class ContentController {
   getTutorial(@Param('slug') slug: string) {
     return this.tutorialService.getTutorial(slug);
   }
+  @Roles(roles.TEACHER)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('tutorial')
   newTutorial(@Body() body: ITutorial) {
     return this.tutorialService.createTutorial(body);
   }
+  @Roles(roles.TEACHER)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('tutorial/:slug/section')
   updateSection(@Param('slug') slug: string, @Body() body: ITextSection) {
     console.debug({ body });
     return this.sectionService.AddTextSection(slug, body);
   }
+  @Roles(roles.TEACHER)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @UseInterceptors(FileInterceptor('image', { dest: 'Images' }))
   @Post('tutorial/:slug/image')
   updateImageSection(
@@ -84,6 +106,8 @@ export class ContentController {
     console.debug({ slug, body, file });
     return this.sectionService.AddFileSection(slug, body, file);
   }
+  @Roles(roles.TEACHER)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @UseInterceptors(FileInterceptor('video', { dest: 'Videos' }))
   @Post('tutorial/:slug/video')
   updateVideoSection(
@@ -95,18 +119,26 @@ export class ContentController {
     return this.sectionService.AddFileSection(slug, body, file);
   }
   // update the tutorial by specified version
+  @Roles(roles.TEACHER)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('tutorial/:slug')
   updateTutorial() {
     return this.tutorialService.updateTutorial();
   }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('tutorial/:slug/publish')
   publishTutorial(@Param('slug') slug: string) {
     return this.tutorialService.publishTutorial(slug);
   }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('tutorial/:slug/draft')
   draftTutorial(@Param('slug') slug: string) {
     return this.tutorialService.draftTutorial(slug);
   }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Delete('tutorial/:slug/archive')
   archiveTutorial() {
     return this.tutorialService.archiveTutorial();
