@@ -8,7 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { roles } from '../roles.enum';
+import { roles } from 'src/common/enum/roles.enum';
 
 export class SignupUserDto {
   @IsString()

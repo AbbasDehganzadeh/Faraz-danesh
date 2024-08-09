@@ -2,7 +2,7 @@ import { Reflector } from '@nestjs/core';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Roles } from './roles.docorator';
-import { roles } from '../roles.enum';
+import { roles } from 'src/common/enum/roles.enum';
 
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}

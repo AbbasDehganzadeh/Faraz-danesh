@@ -23,7 +23,7 @@ import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
 import { RolesGuard } from 'src/auth/decorators/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.docorator';
-import { roles } from 'src/auth/roles.enum';
+import { roles } from 'src/common/enum/roles.enum';
 
 @Controller('/api')
 export class ContentController {

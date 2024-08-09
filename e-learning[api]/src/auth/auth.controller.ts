@@ -20,7 +20,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
-import { roles } from './roles.enum';
+import { roles } from '../common/enum/roles.enum';
 
 @Controller('api/auth')
 export class AuthController {

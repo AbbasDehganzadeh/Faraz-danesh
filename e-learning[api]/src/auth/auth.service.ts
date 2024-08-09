@@ -17,7 +17,7 @@ import {
 } from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { plainToClass } from 'class-transformer';
-import { roles } from './roles.enum';
+import { roles } from 'src/common/enum/roles.enum';
 import { RedisService } from 'src/redisdb/redis.service';
 
 const KEY_SECRET = 'KEY_SECRET';
