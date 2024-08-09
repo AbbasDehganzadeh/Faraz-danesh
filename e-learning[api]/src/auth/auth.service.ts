@@ -51,6 +51,7 @@ export class AuthService {
       uname: data.username,
       email: data.email,
       password: hashedpass,
+      role: data.role,
     });
     this.users.save(user);
 

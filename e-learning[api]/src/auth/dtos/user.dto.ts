@@ -30,6 +30,8 @@ export class SignupUserDto {
   @IsAlphanumeric()
   @MinLength(8)
   password: string;
+
+  readonly role: roles;
 }
 
 export class LoginUserDto {
