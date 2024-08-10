@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -9,10 +9,16 @@ import { User } from './auth/entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ContentModule } from './content/content.module';
 import { RedisModule } from './redisdb/redis.module';
+import morgan from 'morgan';
+import cors from 'cors';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    ConfigModule.forRoot({
+      envFilePath: '../dev.env',
+      isGlobal: true,
+      load: [config],
+    }),
     TypeOrmModule.forRoot({
       type: 'better-sqlite3', //NOTE: use postgres later!
       database: './auth.sql',
@@ -32,4 +38,8 @@ import { RedisModule } from './redisdb/redis.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(morgan, () => cors({ origin: '*' })).forRoutes('*');
+  }
+}
