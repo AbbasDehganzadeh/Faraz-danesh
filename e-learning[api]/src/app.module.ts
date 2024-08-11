@@ -9,8 +9,8 @@ import { User } from './auth/entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ContentModule } from './content/content.module';
 import { RedisModule } from './redisdb/redis.module';
-import morgan from 'morgan';
-import cors from 'cors';
+import * as morgan from 'morgan';
+import * as cors from 'cors';
 
 @Module({
   imports: [
@@ -25,12 +25,7 @@ import cors from 'cors';
       entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
       synchronize: true,
     }),
-    MongooseModule.forRootAsync({
-      useFactory: (config: ConfigService) => ({
-        uri: config.getOrThrow('DB_MONGO_URI'),
-      }),
-      inject: [ConfigService],
-    }),
+    MongooseModule.forRoot('mongodb://localhost:27017/elearning'),
     AuthModule,
     ContentModule,
     RedisModule,
@@ -40,6 +35,6 @@ import cors from 'cors';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(morgan, () => cors({ origin: '*' })).forRoutes('*');
+    consumer.apply(morgan('combined'), cors({ origin: '*' })).forRoutes('*');
   }
 }
