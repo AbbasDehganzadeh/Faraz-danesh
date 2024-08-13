@@ -69,28 +69,37 @@ export class AuthService {
   }
   async signUpStaff(data: SignupStaffDto) {
     const { supervisorName, supervisorKey, ...user } = data;
+    const indexKey = `$SUStaff:${supervisorName}:index`;
     const key = `$SUStaff:${supervisorName}:${user.username}`;
     // fetch from redis
     const message = await this.redisService.getdel(key);
-    console.log({ key: supervisorKey, message });
     if (!message) {
       return null;
     }
+    await this.redisService.srem(indexKey, [key]);
     if (this.matchKeys(message, supervisorKey)) {
       return user;
     }
     return null;
   }
   async setApiKey(supervisor: string, tutor: string) {
+    const indexKey = `$SUStaff:${supervisor}:index`;
     const key = `$SUStaff:${supervisor}:${tutor}`;
     const message = `${supervisor}:${tutor}_${Date()}`;
     const token = this.encryptMessage(message);
     // save to Redis
     await this.redisService.set(key, message);
+    await this.redisService.sadd(indexKey, [key]);
     return token;
   }
-  getApiKey() {
-    return 'api-key get';
+  async getApiKey(supervisor: string) {
+    const indexKey = `$SUStaff:${supervisor}:index`;
+    const keys = await this.redisService.smembers(indexKey);
+    const tokens = [];
+    for (const key of keys) {
+      tokens.push(await this.redisService.get(key));
+    }
+    return tokens;
   }
   refreshToken() {
     return 'tokens are created';

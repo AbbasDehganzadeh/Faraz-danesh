@@ -40,7 +40,7 @@ export class AuthController {
   }
   @Post('login')
   logIn(@Body() body: LoginUserDto) {
-    // const [username, password] = body;
+    // const { username, password } = body;
     return this.authService.logIn(body);
   }
   @Post('signup/tutor')
@@ -70,6 +70,13 @@ export class AuthController {
       throw new HttpException('tutor is required', HttpStatus.BAD_REQUEST);
     }
     return this.authService.setApiKey(user.username, body.tutor);
+  }
+  @Roles(roles.SUPERVISOR)
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
+  @Get('key')
+  getApiKey(@Req() req: any) {
+    const { user } = req;
+    return this.authService.getApiKey(user.username);
   }
   @Post('refresh')
   refresh() {
