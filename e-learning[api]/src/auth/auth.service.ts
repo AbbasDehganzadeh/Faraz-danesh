@@ -71,7 +71,7 @@ export class AuthService {
     const { supervisorName, supervisorKey, ...user } = data;
     const key = `$SUStaff:${supervisorName}:${user.username}`;
     // fetch from redis
-    const message = await this.redisService.get(key);
+    const message = await this.redisService.getdel(key);
     console.log({ key: supervisorKey, message });
     if (!message) {
       return null;
