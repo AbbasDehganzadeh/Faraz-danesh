@@ -66,6 +66,9 @@ export class AuthController {
   @Post('key')
   setApiKey(@Req() req: any, @Body() body: { tutor: string }) {
     const { user } = req;
+    if (!body.tutor) {
+      throw new HttpException('tutor is required', HttpStatus.BAD_REQUEST);
+    }
     return this.authService.setApiKey(user.username, body.tutor);
   }
   @Post('refresh')
