@@ -1,13 +1,13 @@
-class IBaseSection {
+interface IBaseSection {
   kind: 'text' | 'image' | 'video';
   version: string;
   priority: number;
 }
 
-export class ITextSection extends IBaseSection {
+export interface ITextSection extends IBaseSection {
   text: string;
 }
 
-export class IFileSection extends IBaseSection {
+export interface IFileSection extends IBaseSection {
   alt: string;
 }
