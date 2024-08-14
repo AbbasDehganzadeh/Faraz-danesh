@@ -45,6 +45,9 @@ export class CourseService {
     });
     return course.save();
   }
+  addTutorial() {
+    return 'Tutorial added';
+  }
   // update the course by specified version
   updateCourse(slug: string, data: ICourse) {
     const course = this.courseModel.findOneAndUpdate(

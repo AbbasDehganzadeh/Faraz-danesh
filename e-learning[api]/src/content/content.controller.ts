@@ -50,12 +50,16 @@ export class ContentController {
     console.debug({ body });
     return this.courseService.createCourse(body);
   }
+  @Put('course/:slug/content')
+  addTutorial() {
+    return this.courseService.addTutorial();
+  }
   // update the course by specified version
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('course/:slug')
-  updateCourse(@Param('slug')slug:string, @Body()body: ICourse) {
-    return this.courseService.updateCourse(slug,body);
+  updateCourse(@Param('slug') slug: string, @Body() body: ICourse) {
+    return this.courseService.updateCourse(slug, body);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -129,8 +133,8 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('tutorial/:slug')
-  updateTutorial(@Param('slug')slug:string, @Body()body: ICourse) {
-    return this.tutorialService.updateTutorial(slug,body);
+  updateTutorial(@Param('slug') slug: string, @Body() body: ICourse) {
+    return this.tutorialService.updateTutorial(slug, body);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
