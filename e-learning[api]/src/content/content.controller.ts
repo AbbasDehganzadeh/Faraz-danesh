@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -24,6 +26,7 @@ import { IFileSection, ITextSection } from './intefaces/section.interface';
 import { RolesGuard } from 'src/auth/decorators/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.docorator';
 import { roles } from 'src/common/enum/roles.enum';
+import { Response } from 'express';
 
 @Controller('/api')
 export class ContentController {
@@ -117,6 +120,10 @@ export class ContentController {
   ) {
     console.debug({ slug, body, file });
     return this.sectionService.AddFileSection(slug, body, file);
+  }
+  @Get('content/asset/')
+  getAsset(@Query('path') path: string, @Res() res: Response) {
+    res.sendFile(process.cwd() + '/' + path);
   }
   // update the tutorial by specified version
   @Roles(roles.TEACHER)

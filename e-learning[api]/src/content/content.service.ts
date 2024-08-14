@@ -125,7 +125,7 @@ export class SectionService {
   }
   AddFileSection(slug: string, data: IFileSection, file: Express.Multer.File) {
     // doing some stuff with data
-    const path = file.filename;
+    const path = `${file.path}`;
     const size = file.size;
 
     const tutorial = this.TutorialModel.findOneAndUpdate(
@@ -134,4 +134,5 @@ export class SectionService {
     );
     return tutorial;
   }
+  getFile(path: string) {}
 }
