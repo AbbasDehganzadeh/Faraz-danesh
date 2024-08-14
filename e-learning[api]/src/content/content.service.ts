@@ -21,21 +21,22 @@ export class CourseService {
   findCourses() {
     return this.courseModel.find();
   }
-  getCourse(slug: string) {
-    return this.courseModel.findOne({ slug: slug });
+  async getCourse(slug: string) {
+    return await this.courseModel.findOne({ slug: slug });
   }
-  createCourse(data: ICourse) {
+  async createCourse(data: ICourse) {
     const slug = data.name; //? for simplicity,
-    if (this.getCourse(data)) {
-      console.debug('updated', slug);
+    const entity = await this.getCourse(slug);
+    if (entity?.slug == slug) {
+      console.log('updated', slug);
       return this.updateCourse(slug, data);
     }
-    console.debug('created', slug);
+    console.log('created', slug);
     const course = new this.courseModel({
       slug,
       name: data.name,
       version: data.version,
-      versions: data.version,
+      versions: [data.version],
       intro: data.intro,
       description: data.description,
       teachers: data.teachers,
@@ -82,12 +83,13 @@ export class TutorialService {
   findTutorials() {
     return this.TutorialModel.find();
   }
-  getTutorial(slug: string) {
-    return this.TutorialModel.findOne({ slug: slug });
+  async getTutorial(slug: string) {
+    return await this.TutorialModel.findOne({ slug: slug });
   }
-  createTutorial(data: ITutorial) {
+  async createTutorial(data: ITutorial) {
     const slug = data.name; //? for simplicity,
-    if (this.getTutorial(data)) {
+    const entity = await this.getTutorial(slug);
+    if (entity?.slug == slug) {
       console.debug('updated', slug);
       return this.updateTutorial(slug, data);
     }
@@ -96,7 +98,7 @@ export class TutorialService {
       slug,
       name: data.name,
       version: data.version,
-      versions: data.version,
+      versions: [data.version],
       description: data.description,
       teachers: data.teachers,
       price: data.price,

@@ -54,8 +54,8 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('course/:slug')
-  updateCourse() {
-    return this.courseService.updateCourse();
+  updateCourse(@Param('slug')slug:string, @Body()body: ICourse) {
+    return this.courseService.updateCourse(slug,body);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -129,8 +129,8 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('tutorial/:slug')
-  updateTutorial() {
-    return this.tutorialService.updateTutorial();
+  updateTutorial(@Param('slug')slug:string, @Body()body: ICourse) {
+    return this.tutorialService.updateTutorial(slug,body);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
