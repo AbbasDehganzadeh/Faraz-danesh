@@ -26,10 +26,16 @@ export class CourseService {
   }
   createCourse(data: ICourse) {
     const slug = data.name; //? for simplicity,
+    if (this.getCourse(data)) {
+      console.debug('updated', slug);
+      return this.updateCourse(slug, data);
+    }
+    console.debug('created', slug);
     const course = new this.courseModel({
       slug,
       name: data.name,
       version: data.version,
+      versions: data.version,
       intro: data.intro,
       description: data.description,
       teachers: data.teachers,
@@ -39,8 +45,21 @@ export class CourseService {
     return course.save();
   }
   // update the course by specified version
-  updateCourse() {
-    return 'update course';
+  updateCourse(slug: string, data: ICourse) {
+    const course = this.courseModel.findOneAndUpdate(
+      { slug },
+      {
+        name: data.name,
+        version: data.version,
+        intro: data.intro,
+        description: data.description,
+        teachers: data.teachers,
+        price: data.price,
+        tags: data.tags,
+        $addToSet: { versions: data.version },
+      },
+    );
+    return course;
   }
   //TODO makePublish [generic function]
   publishCourse(slug: string) {
@@ -68,10 +87,16 @@ export class TutorialService {
   }
   createTutorial(data: ITutorial) {
     const slug = data.name; //? for simplicity,
+    if (this.getTutorial(data)) {
+      console.debug('updated', slug);
+      return this.updateTutorial(slug, data);
+    }
+    console.debug('created', slug);
     const tutorial = new this.TutorialModel({
       slug,
       name: data.name,
       version: data.version,
+      versions: data.version,
       description: data.description,
       teachers: data.teachers,
       price: data.price,
@@ -80,8 +105,20 @@ export class TutorialService {
     return tutorial.save();
   }
   // update the tutorial by specified version
-  updateTutorial() {
-    return 'update tutorial';
+  updateTutorial(slug: string, data: ITutorial) {
+    const tutorial = this.TutorialModel.findOneAndUpdate(
+      { slug },
+      {
+        name: data.name,
+        version: data.version,
+        description: data.description,
+        teachers: data.teachers,
+        price: data.price,
+        tags: data.tags,
+        $addToSet: { versions: data.version },
+      },
+    );
+    return tutorial;
   }
   //TODO makePublish [generic function]
   publishTutorial(slug: string) {
