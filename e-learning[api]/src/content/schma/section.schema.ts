@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-enum SectionType {
+export type SectionType = TextSection | ImageSection | VideoSection
+
+enum sectionType {
   Text = 'text',
   Image = 'image',
   Video = 'video',
@@ -18,8 +20,8 @@ enum VideoType {
 
 @Schema({ discriminatorKey: 'kind' })
 export class Section {
-  @Prop({ enum: SectionType })
-  kind: SectionType;
+  @Prop({ enum: sectionType })
+  kind: sectionType;
 
   @Prop({ match: /\d{2}-\d{4}/ })
   version: string;
