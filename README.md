@@ -33,3 +33,17 @@ This is a project where I develop an semi-functional e-learning platform by node
 * PostgreSql
 * MongoDb
 * Git
+---
+## طریق نصب و استفاده
+ابتدا پروژه را از گیت هاب دانلود کرده و وارد شوید
+
+‍‍‍``` 
+``` shell
+git clone https://github.com/AbbasDehganzadeh/Faraz-danesh/
+cd 'Faraz-danesh//e-learning[api]'
+```
+
+سپس وابستگی ها را نصب کرده و بعد پروژه زا زان کنید
+``` shell
+npm i && npm run start
+```
