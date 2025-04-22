@@ -22,9 +22,8 @@ class Tutorial {
   @Prop()
   description: string;
 
-  //TODO make the Type specific!!
   @Prop()
-  section: SectionType[];
+  sections: SectionType[];
 
   @Prop({ default: true })
   draft: boolean;

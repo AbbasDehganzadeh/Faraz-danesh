@@ -147,7 +147,7 @@ export class SectionService {
   AddSection(slug: string, data: any) {
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { section: data },
+      { sections: data },
     );
 
     return tutorial.sort('section.priority', { override: false });
@@ -156,7 +156,7 @@ export class SectionService {
     // const section = new this.texttSection(data);
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { $push: { section: data } },
+      { $push: { sections: data } },
     );
     return tutorial;
   }
@@ -167,7 +167,7 @@ export class SectionService {
 
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { $push: { section: { ...data, path, size } } },
+      { $push: { sections: { ...data, path, size } } },
     );
     return tutorial;
   }
