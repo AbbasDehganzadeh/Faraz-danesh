@@ -16,7 +16,7 @@ class Course {
   versions: string[];
 
   @Prop({ type: Types.ObjectId, ref: 'tutorials' })
-  tutorialsId: Types.ObjectId;
+  tutorialsId: Types.ObjectId[];
 
   @Prop({ required: true })
   name: string;
