@@ -1,4 +1,3 @@
-import { TextSection } from './schma/section.schema';
 import {
   HttpCode,
   HttpException,
@@ -6,9 +5,10 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CourseDocument } from './schma/course.schma';
-import { TutorialDocument } from './schma/tutorial.schma';
 import { Model } from 'mongoose';
+import { CourseDocument } from './schema/course.schema';
+import { TutorialDocument } from './schema/tutorial.schema';
+import { TextSection } from './schema/section.schema';
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';

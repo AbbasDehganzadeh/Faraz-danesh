@@ -6,8 +6,8 @@ import {
   TutorialService,
 } from './content.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CourseSchema } from './schma/course.schma';
-import { TutorialSchema } from './schma/tutorial.schma';
+import { CourseSchema } from './schema/course.schema';
+import { TutorialSchema } from './schema/tutorial.schema';
 import {
   ImageSection,
   ImageSectionSchema,
@@ -15,7 +15,7 @@ import {
   TextSectionSchema,
   VideoSection,
   VideoSectionSchema,
-} from './schma/section.schema';
+} from './schema/section.schema';
 
 @Module({
   imports: [
