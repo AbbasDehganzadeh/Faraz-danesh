@@ -5,5 +5,5 @@ export interface ICourse {
   description: string;
   teachers: number[];
   price: number;
-  tags:string[];
+  tags: string[];
 }

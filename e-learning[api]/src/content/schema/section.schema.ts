@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export type SectionType = TextSection | ImageSection | VideoSection
+export type SectionType = TextSection | ImageSection | VideoSection;
 
 enum sectionType {
   Text = 'text',

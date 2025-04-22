@@ -1,9 +1,4 @@
-import {
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CourseDocument } from './schema/course.schema';
@@ -176,5 +171,7 @@ export class SectionService {
     );
     return tutorial;
   }
-  getFile(path: string) {}
+  getFile(path: string) {
+    return path;
+  }
 }
