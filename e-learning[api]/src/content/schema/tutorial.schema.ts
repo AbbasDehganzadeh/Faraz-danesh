@@ -6,7 +6,7 @@ import { SectionType } from './section.schema';
 export type TutorialDocument = HydratedDocument<Tutorial>;
 
 @Schema()
-class Tutorial {
+export class Tutorial {
   @Prop()
   slug: string;
 

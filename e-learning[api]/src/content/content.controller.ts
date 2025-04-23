@@ -4,6 +4,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -50,9 +52,17 @@ export class ContentController {
     console.debug({ body });
     return this.courseService.createCourse(body);
   }
-  @Put('course/:slug/content')
-  addTutorial() {
-    return this.courseService.addTutorial();
+  @Post('course/:slug/content')
+  addTutorial(@Param('slug') slug: string, @Body() body: { slug: string }) {
+    this.getTutorial(body.slug).then((tutorial) => {
+      if (tutorial?._id) {
+        return this.courseService.addTutorial(slug, tutorial._id);
+      }
+      throw new HttpException(
+        'tutorial with correspnding slug not found',
+        HttpStatus.NOT_FOUND,
+      );
+    });
   }
   // update the course by specified version
   @Roles(roles.TEACHER)
