@@ -7,6 +7,7 @@ import { TextSection } from './schema/section.schema';
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
+import { createSlug, createVersion } from 'src/common/utils/content';
 
 @Injectable()
 export class CourseService {
@@ -20,7 +21,9 @@ export class CourseService {
     return await this.courseModel.findOne({ slug: slug });
   }
   async createCourse(data: ICourse) {
-    const slug = data.name; //? for simplicity,
+    const slug = createSlug(data.name!);
+    const version = createVersion();
+    data.version = version;
     const entity = await this.getCourse(slug);
     if (entity?.slug == slug) {
       console.log('updated', slug);
@@ -85,7 +88,9 @@ export class TutorialService {
     return await this.TutorialModel.findOne({ slug: slug });
   }
   async createTutorial(data: ITutorial) {
-    const slug = data.name; //? for simplicity,
+    const slug = createSlug(data.name);
+    const version = createVersion();
+    data.version = version;
     const entity = await this.getTutorial(slug);
     if (entity?.slug == slug) {
       console.debug('updated', slug);
