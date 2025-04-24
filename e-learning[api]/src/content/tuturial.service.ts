@@ -34,7 +34,7 @@ export class TutorialService {
       version: data.version,
       versions: [data.version],
       description: data.description,
-      teachers: data.teachers,
+      //TODO assign teacher based on reuest
       price: data.price,
       tags: data.tags,
     });
@@ -48,7 +48,7 @@ export class TutorialService {
         name: data.name,
         version: data.version,
         description: data.description,
-        teachers: data.teachers,
+        //TODO assign teacher based on reuest
         price: data.price,
         tags: data.tags,
         $addToSet: { versions: data.version },

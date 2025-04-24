@@ -33,7 +33,7 @@ export class CourseService {
       versions: [data.version],
       intro: data.intro,
       description: data.description,
-      teachers: data.teachers,
+      //TODO assign teacher based on reuest
       price: data.price,
       tags: data.tags,
     });
@@ -55,7 +55,7 @@ export class CourseService {
         version: data.version,
         intro: data.intro,
         description: data.description,
-        teachers: data.teachers,
+        //TODO assign teacher based on reuest
         price: data.price,
         tags: data.tags,
         $addToSet: { versions: data.version },
