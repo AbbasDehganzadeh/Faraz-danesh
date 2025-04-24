@@ -15,7 +15,7 @@ export class CommentService {
     }
     async addCourseComment(slug: string, comment: { text: string, rate: number }) {
         const now = new Date()
-        const {text, rate} = comment
+        const { text, rate } = comment
         const course = await this.courseService.getCourse(slug)
         course?.comments.push({
             id: uuidv4(),
@@ -24,8 +24,27 @@ export class CommentService {
         course?.save()
         return course?.comments.at(-1)
     }
-    modifyCourseComment(slug: string, id: string, comment: { text: string, rate: number }) {
-        return 'Put course comment'
+    async modifyCourseComment(slug: string, id: string, comment: { text: string, rate: number }) {
+        const now = new Date()
+        const { text, rate } = comment
+        const course = await this.courseService.getCourse(slug)
+        const currComment = course?.comments.find(obj => obj.id === id)
+        if (!currComment) {
+            return this.addCourseComment(slug, comment)
+        }
+        const idx = course?.comments.findIndex(obj => obj.id === id)
+        if (idx) {
+            course?.comments.splice(idx, 1)
+        }
+        course?.comments.push({
+            id: currComment.id,
+            text: !text ? currComment.text : text,
+            rate: !rate ? currComment.rate : rate,
+            createdAt: currComment.createdAt,
+            updatedAt: now,
+        })
+        course?.save()
+        return course?.comments.at(-1)
     }
     deleteCourseComment(slug: string, id: string) {
         return 'Delete course comment'
@@ -37,7 +56,7 @@ export class CommentService {
     }
     async addTutorialComment(slug: string, comment: { text: string, rate: number }) {
         const now = new Date()
-        const {text, rate} = comment
+        const { text, rate } = comment
         const tutorial = await this.tutorialService.getTutorial(slug)
         tutorial?.comments.push({
             id: uuidv4(),
@@ -46,8 +65,27 @@ export class CommentService {
         tutorial?.save()
         return tutorial?.comments.at(-1)
     }
-    modifyTutorialComment(slug: string, id: string, comment: { text: string, rate: number }) {
-        return 'Put tutorial comment'
+    async modifyTutorialComment(slug: string, id: string, comment: { text: string, rate: number }) {
+        const now = new Date()
+        const { text, rate } = comment
+        const tutorial = await this.tutorialService.getTutorial(slug)
+        const currComment = tutorial?.comments.find(obj => obj.id === id)
+        if (!currComment) {
+            return this.addTutorialComment(slug, comment)
+        }
+        const idx = tutorial?.comments.findIndex(obj => obj.id === id)
+        if (idx) {
+            tutorial?.comments.splice(idx, 1)
+        }
+        tutorial?.comments.push({
+            id: currComment.id,
+            text: !text ? currComment.text : text,
+            rate: !rate ? currComment.rate : rate,
+            createdAt: currComment.createdAt,
+            updatedAt: now,
+        })
+        tutorial?.save()
+        return tutorial?.comments.at(-1)
     }
     deleteTutorialComment(slug: string, id: string) {
         return 'Delete tutorial comment'
