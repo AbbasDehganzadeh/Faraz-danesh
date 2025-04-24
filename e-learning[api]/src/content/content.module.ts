@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ContentController } from './content.controller';
-import {
-  CourseService,
-  SectionService,
-  TutorialService,
-} from './content.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CourseService } from './course.service'
+import { TutorialService, SectionService } from './tuturial.service'
 import { CourseSchema } from './schema/course.schema';
 import { TutorialSchema } from './schema/tutorial.schema';
 import {

@@ -17,18 +17,15 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  CourseService,
-  SectionService,
-  TutorialService,
-} from './content.service';
+import { RolesGuard } from 'src/auth/decorators/roles.guard';
+import { Response } from 'express';
+import { Roles } from 'src/auth/decorators/roles.docorator';
+import { roles } from 'src/common/enum/roles.enum';
+import { CourseService } from './course.service'
+import { TutorialService, SectionService } from './tuturial.service'
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
-import { RolesGuard } from 'src/auth/decorators/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.docorator';
-import { roles } from 'src/common/enum/roles.enum';
-import { Response } from 'express';
 
 @Controller('/api')
 export class ContentController {
