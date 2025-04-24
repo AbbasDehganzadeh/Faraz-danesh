@@ -51,7 +51,7 @@ export class ContentController {
   }
   @Post('course/:slug/content')
   addTutorial(@Param('slug') slug: string, @Body() body: { slug: string }) {
-    this.getTutorial(body.slug).then((tutorial) => {
+    this.tutorialService.getTutorial(body.slug).then((tutorial) => {
       if (tutorial?._id) {
         return this.courseService.addTutorial(slug, tutorial._id);
       }
