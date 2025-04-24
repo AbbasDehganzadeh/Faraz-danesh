@@ -32,8 +32,8 @@ export class CommentService {
         if (!currComment) {
             return this.addCourseComment(slug, comment)
         }
-        const idx = course?.comments.findIndex(obj => obj.id === id)
-        if (idx) {
+        const idx = course?.comments.findIndex(obj => obj.id === id)!
+        if (idx !== -1) {
             course?.comments.splice(idx, 1)
         }
         course?.comments.push({
@@ -46,8 +46,14 @@ export class CommentService {
         course?.save()
         return course?.comments.at(-1)
     }
-    deleteCourseComment(slug: string, id: string) {
-        return 'Delete course comment'
+    async deleteCourseComment(slug: string, id: string) {
+        const course = await this.courseService.getCourse(slug)
+        const idx = course?.comments.findIndex(obj => obj.id === id)!
+        if (idx !== -1) {
+            course?.comments.splice(idx, 1)
+        }
+        course?.save()
+        return course?.comments
     }
 
     async getTutorialComment(slug: string) {
@@ -73,8 +79,8 @@ export class CommentService {
         if (!currComment) {
             return this.addTutorialComment(slug, comment)
         }
-        const idx = tutorial?.comments.findIndex(obj => obj.id === id)
-        if (idx) {
+        const idx = tutorial?.comments.findIndex(obj => obj.id === id)!
+        if (idx !== -1) {
             tutorial?.comments.splice(idx, 1)
         }
         tutorial?.comments.push({
@@ -87,8 +93,14 @@ export class CommentService {
         tutorial?.save()
         return tutorial?.comments.at(-1)
     }
-    deleteTutorialComment(slug: string, id: string) {
-        return 'Delete tutorial comment'
+    async deleteTutorialComment(slug: string, id: string) {
+        const tutorial = await this.tutorialService.getTutorial(slug)
+        const idx = tutorial?.comments.findIndex(obj => obj.id === id)!
+        if (idx !== -1) {
+            tutorial?.comments.splice(idx, 1)
+        }
+        tutorial?.save()
+        return tutorial?.comments
     }
 
 }
