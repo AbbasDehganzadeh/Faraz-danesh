@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Injectable } from "@nestjs/common";
 import { CourseService } from "./course.service";
 import { TutorialService } from "./tuturial.service";
@@ -13,9 +14,13 @@ export class CommentService {
         return course?.comments
     }
     async addCourseComment(slug: string, comment: { text: string, rate: number }) {
-        const course = await this.courseService.getCourse(slug)
+        const now = new Date()
         const {text, rate} = comment
-        course?.comments.push({rate, text})
+        const course = await this.courseService.getCourse(slug)
+        course?.comments.push({
+            id: uuidv4(),
+            rate, text, createdAt: now, updatedAt: now,
+        })
         course?.save()
         return course?.comments.at(-1)
     }
@@ -31,9 +36,13 @@ export class CommentService {
         return tutorial?.comments
     }
     async addTutorialComment(slug: string, comment: { text: string, rate: number }) {
-        const tutorial = await this.tutorialService.getTutorial(slug)
+        const now = new Date()
         const {text, rate} = comment
-        tutorial?.comments.push({rate, text})
+        const tutorial = await this.tutorialService.getTutorial(slug)
+        tutorial?.comments.push({
+            id: uuidv4(),
+            rate, text, createdAt: now, updatedAt: now,
+        })
         tutorial?.save()
         return tutorial?.comments.at(-1)
     }
