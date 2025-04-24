@@ -8,11 +8,16 @@ export class CommentService {
         private courseService: CourseService,
         private tutorialService: TutorialService,
     ) { }
-    getCourseComment(slug: string) {
-        return 'Get course comments'
+    async getCourseComment(slug: string) {
+        const course = await this.courseService.getCourse(slug)
+        return course?.comments
     }
-    addCourseComment(slug: string, comment: { text: string, rate: number }) {
-        return 'Post course comment'
+    async addCourseComment(slug: string, comment: { text: string, rate: number }) {
+        const course = await this.courseService.getCourse(slug)
+        const {text, rate} = comment
+        course?.comments.push({rate, text})
+        course?.save()
+        return course?.comments.at(-1)
     }
     modifyCourseComment(slug: string, id: string, comment: { text: string, rate: number }) {
         return 'Put course comment'
@@ -21,11 +26,16 @@ export class CommentService {
         return 'Delete course comment'
     }
 
-    getTutorialComment(slug: string) {
-        return 'Get tutorial comments'
+    async getTutorialComment(slug: string) {
+        const tutorial = await this.tutorialService.getTutorial(slug)
+        return tutorial?.comments
     }
-    addTutorialComment(slug: string, comment: { text: string, rate: number }) {
-        return 'Post tutorial comment'
+    async addTutorialComment(slug: string, comment: { text: string, rate: number }) {
+        const tutorial = await this.tutorialService.getTutorial(slug)
+        const {text, rate} = comment
+        tutorial?.comments.push({rate, text})
+        tutorial?.save()
+        return tutorial?.comments.at(-1)
     }
     modifyTutorialComment(slug: string, id: string, comment: { text: string, rate: number }) {
         return 'Put tutorial comment'
