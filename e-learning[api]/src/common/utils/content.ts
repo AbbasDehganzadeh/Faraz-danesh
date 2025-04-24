@@ -1,11 +1,10 @@
 export function createSlug(name: string) {
-  let nameStr = ''
+  let nameStr = '';
   if (name) {
-    const newName = name!
+    const newName = name
       .replace(/[\W\s]/g, ' ') // replace non-char with space
       .replace(/\s+/g, '_'); // remove unnessecery spaces
-    const newDate = formatDate(new Date(), '_');
-    nameStr = `${newName}_${newDate}`;
+    nameStr = newName;
   }
 
   return nameStr;

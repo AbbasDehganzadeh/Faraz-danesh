@@ -7,7 +7,7 @@ export type CourseDocument = HydratedDocument<Course>;
 
 @Schema()
 class Course {
-  @Prop()
+  @Prop({ unique: true })
   slug: string;
 
   @Prop({ required: true, match: /\d{2}-\d{4}/ })
