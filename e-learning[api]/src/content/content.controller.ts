@@ -21,11 +21,12 @@ import { RolesGuard } from 'src/auth/decorators/roles.guard';
 import { Response } from 'express';
 import { Roles } from 'src/auth/decorators/roles.docorator';
 import { roles } from 'src/common/enum/roles.enum';
-import { CourseService } from './course.service'
-import { TutorialService, SectionService } from './tuturial.service'
+import { CourseService } from './course.service';
+import { TutorialService, SectionService } from './tuturial.service';
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
+import { TutorialQueryDto } from './dto/query.dto';
 
 @Controller('/api')
 export class ContentController {
@@ -88,11 +89,13 @@ export class ContentController {
   }
 
   @Get('tutorial')
-  getTutorials() {
+  getTutorials(@Query() q: TutorialQueryDto) {
+    console.debug({ q });
     return this.tutorialService.findTutorials();
   }
   @Get('tutorial/:slug')
-  getTutorial(@Param('slug') slug: string) {
+  getTutorial(@Query() q: TutorialQueryDto, @Param('slug') slug: string) {
+    console.debug({ q });
     return this.tutorialService.getTutorial(slug);
   }
   @Roles(roles.TEACHER)
