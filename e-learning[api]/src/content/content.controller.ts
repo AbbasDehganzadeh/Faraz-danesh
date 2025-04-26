@@ -24,10 +24,12 @@ import { Roles } from 'src/auth/decorators/roles.docorator';
 import { roles } from 'src/common/enum/roles.enum';
 import { CourseService } from './course.service';
 import { TutorialService, SectionService } from './tuturial.service';
+import { CreateCourseDto } from './dto/course.dto';
+import { CreateTutorialDto } from './dto/tutorial.dto';
+import { TutorialQueryDto } from './dto/query.dto';
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
-import { TutorialQueryDto } from './dto/query.dto';
 
 @Controller('/api')
 export class ContentController {
@@ -47,7 +49,7 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('course')
-  newCourse(@Req() req: any, @Body() body: ICourse) {
+  newCourse(@Req() req: any, @Body() body: CreateCourseDto) {
     const { user } = req;
     console.debug({ body });
     return this.courseService.createCourse(body, user.username);
@@ -104,7 +106,7 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('tutorial')
-  newTutorial(@Req() req: any, @Body() body: ITutorial) {
+  newTutorial(@Req() req: any, @Body() body: CreateTutorialDto) {
     const { user } = req;
     return this.tutorialService.createTutorial(body, user.username);
   }
