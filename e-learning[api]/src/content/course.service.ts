@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { CourseDocument } from './schema/course.schema';
 import { ICourse } from './intefaces/course.interface';
 import { createSlug, createVersion } from 'src/common/utils/content';
+import { Tutorial } from './schema/tutorial.schema';
 
 @Injectable()
 export class CourseService {
@@ -14,7 +15,9 @@ export class CourseService {
     return this.courseModel.find();
   }
   async getCourse(slug: string) {
-    return await this.courseModel.findOne({ slug: slug });
+    return await this.courseModel
+      .findOne({ slug: slug })
+      .populate<{ tutorials: Tutorial }>('tutorials')
   }
   async createCourse(data: ICourse) {
     const slug = createSlug(data.name);
@@ -42,7 +45,7 @@ export class CourseService {
   async addTutorial(courseSlug: string, tutorialId: Types.ObjectId) {
     const course = this.courseModel.updateOne(
       { slug: courseSlug },
-      { intro: 'ok', $push: { tutorialsId: tutorialId } },
+      { $push: { tutorials: tutorialId } },
     );
     return course;
   }

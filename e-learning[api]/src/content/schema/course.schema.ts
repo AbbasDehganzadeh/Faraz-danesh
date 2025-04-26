@@ -16,8 +16,8 @@ class Course {
   @Prop()
   versions: string[];
 
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: Tutorial.name }] })
-  tutorialsId: MongooseSchema.Types.ObjectId[];
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'tutorials' }] })
+  tutorials: MongooseSchema.Types.ObjectId[];
 
   @Prop({ required: true })
   name: string;
