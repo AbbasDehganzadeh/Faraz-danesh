@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { CommentService } from "./comments.service";
+import { CommentDto } from "./dto/comment.dto";
 
 @Controller('/api')
 export class CommentController {
@@ -11,11 +12,11 @@ export class CommentController {
         return this.commentService.getCourseComment(slug)
     }
     @Post('course/:slug/comment')
-    addCourseComment(@Param('slug') slug: string, @Body() body: { text: string, rate: number }) {
+    addCourseComment(@Param('slug') slug: string, @Body() body: CommentDto) {
         return this.commentService.addCourseComment(slug, body)
     }
     @Put('course/:slug/comment/:id')
-    modCourseComment(@Param('slug') slug: string, @Param('id') id: string, @Body() body: { text: string, rate: number }) {
+    modCourseComment(@Param('slug') slug: string, @Param('id') id: string, @Body() body: CommentDto) {
         return this.commentService.modifyCourseComment(slug, id, body)
     }
     @Delete('course/:slug/comment/:id')
@@ -28,11 +29,11 @@ export class CommentController {
         return this.commentService.getTutorialComment(slug)
     }
     @Post('tutorial/:slug/comment')
-    addTutorialComment(@Param('slug') slug: string, @Body() body: { text: string, rate: number }) {
+    addTutorialComment(@Param('slug') slug: string, @Body() body: CommentDto) {
         return this.commentService.addTutorialComment(slug, body)
     }
     @Put('tutorial/:slug/comment/:id')
-    modTutorialComment(@Param('slug') slug: string, @Param('id') id: string, @Body() body: { text: string, rate: number }) {
+    modTutorialComment(@Param('slug') slug: string, @Param('id') id: string, @Body() body: CommentDto) {
         return this.commentService.modifyTutorialComment(slug, id, body)
     }
     @Delete('tutorial/:slug/comment/:id')
