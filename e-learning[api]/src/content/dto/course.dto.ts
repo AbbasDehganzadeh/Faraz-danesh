@@ -1,3 +1,4 @@
+import { PartialType } from "@nestjs/mapped-types";
 import {
   IsInt,
   IsNotEmpty,
@@ -45,3 +46,5 @@ export class CreateCourseDto {
   @IsOptional()
   tags: string[];
 }
+
+export class UpdateCourseDto extends PartialType(CreateCourseDto) {}
