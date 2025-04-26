@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
   UploadedFile,
   UseGuards,
@@ -46,9 +47,10 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('course')
-  newCourse(@Body() body: ICourse) {
+  newCourse(@Req() req: any, @Body() body: ICourse) {
+    const { user } = req;
     console.debug({ body });
-    return this.courseService.createCourse(body);
+    return this.courseService.createCourse(body, user.username);
   }
   @Post('course/:slug/content')
   addTutorial(@Param('slug') slug: string, @Body() body: { slug: string }) {
@@ -66,8 +68,9 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('course/:slug')
-  updateCourse(@Param('slug') slug: string, @Body() body: ICourse) {
-    return this.courseService.updateCourse(slug, body);
+  updateCourse(@Req() req: any, @Param('slug') slug: string, @Body() body: ICourse) {
+    const { user } = req;
+    return this.courseService.updateCourse(slug, body, user.username);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -101,8 +104,9 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('tutorial')
-  newTutorial(@Body() body: ITutorial) {
-    return this.tutorialService.createTutorial(body);
+  newTutorial(@Req() req: any, @Body() body: ITutorial) {
+    const { user } = req;
+    return this.tutorialService.createTutorial(body, user.username);
   }
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -143,8 +147,9 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('tutorial/:slug')
-  updateTutorial(@Param('slug') slug: string, @Body() body: ICourse) {
-    return this.tutorialService.updateTutorial(slug, body);
+  updateTutorial(@Req() req: any, @Param('slug') slug: string, @Body() body: ICourse) {
+    const { user } = req;
+    return this.tutorialService.updateTutorial(slug, body, user.username);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))

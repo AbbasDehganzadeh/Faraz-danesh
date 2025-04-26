@@ -19,14 +19,14 @@ export class CourseService {
       .findOne({ slug: slug })
       .populate<{ tutorials: Tutorial }>('tutorials')
   }
-  async createCourse(data: ICourse) {
+  async createCourse(data: ICourse, username: string) {
     const slug = createSlug(data.name);
     const version = createVersion();
     data.version = version;
     const entity = await this.getCourse(slug);
     if (entity?.slug === slug) {
       console.log('updated', slug);
-      return this.updateCourse(slug, data);
+      return this.updateCourse(slug, data, username);
     }
     console.log('created', slug);
     const course = new this.courseModel({
@@ -36,7 +36,7 @@ export class CourseService {
       versions: [data.version],
       intro: data.intro,
       description: data.description,
-      //TODO assign teacher based on reuest
+      teachers: [username],
       price: data.price,
       tags: data.tags,
     });
@@ -50,7 +50,7 @@ export class CourseService {
     return course;
   }
   // update the course by specified version
-  updateCourse(slug: string, data: ICourse) {
+  updateCourse(slug: string, data: ICourse, username: string) {
     const course = this.courseModel.findOneAndUpdate(
       { slug },
       {
@@ -58,10 +58,9 @@ export class CourseService {
         version: data.version,
         intro: data.intro,
         description: data.description,
-        //TODO assign teacher based on reuest
         price: data.price,
         tags: data.tags,
-        $addToSet: { versions: data.version },
+        $addToSet: { versions: data.version, teachers: username },
       },
     );
     return course;

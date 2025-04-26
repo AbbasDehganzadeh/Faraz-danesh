@@ -11,21 +11,21 @@ import { createSlug, createVersion } from 'src/common/utils/content';
 export class TutorialService {
   constructor(
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
-  ) {}
+  ) { }
   findTutorials() {
     return this.TutorialModel.find();
   }
   async getTutorial(slug: string) {
     return await this.TutorialModel.findOne({ slug: slug });
   }
-  async createTutorial(data: ITutorial) {
+  async createTutorial(data: ITutorial, username: string) {
     const slug = createSlug(data.name);
     const version = createVersion();
     data.version = version;
     const entity = await this.getTutorial(slug);
     if (entity?.slug == slug) {
       console.debug('updated', slug);
-      return this.updateTutorial(slug, data);
+      return this.updateTutorial(slug, data, username);
     }
     console.debug('created', slug);
     const tutorial = new this.TutorialModel({
@@ -34,24 +34,23 @@ export class TutorialService {
       version: data.version,
       versions: [data.version],
       description: data.description,
-      //TODO assign teacher based on reuest
+      teachers: [username],
       price: data.price,
       tags: data.tags,
     });
     return tutorial.save();
   }
   // update the tutorial by specified version
-  updateTutorial(slug: string, data: ITutorial) {
+  updateTutorial(slug: string, data: ITutorial, username: string) {
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug },
       {
         name: data.name,
         version: data.version,
         description: data.description,
-        //TODO assign teacher based on reuest
         price: data.price,
         tags: data.tags,
-        $addToSet: { versions: data.version },
+        $addToSet: { versions: data.version, teachers: username },
       },
     );
     return tutorial;
