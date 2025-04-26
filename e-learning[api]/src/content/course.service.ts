@@ -5,12 +5,13 @@ import { CourseDocument } from './schema/course.schema';
 import { ICourse } from './intefaces/course.interface';
 import { createSlug, createVersion } from 'src/common/utils/content';
 import { Tutorial } from './schema/tutorial.schema';
+import { use } from 'passport';
 
 @Injectable()
 export class CourseService {
   constructor(
     @InjectModel('courses') private courseModel: Model<CourseDocument>,
-  ) {}
+  ) { }
   findCourses() {
     return this.courseModel.find();
   }
@@ -50,7 +51,7 @@ export class CourseService {
     return course;
   }
   // update the course by specified version
-  updateCourse(slug: string, data: ICourse, username: string) {
+  updateCourse(slug: string, data: Partial<ICourse>, username: string) {
     const course = this.courseModel.findOneAndUpdate(
       { slug },
       {

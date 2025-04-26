@@ -24,11 +24,9 @@ import { Roles } from 'src/auth/decorators/roles.docorator';
 import { roles } from 'src/common/enum/roles.enum';
 import { CourseService } from './course.service';
 import { TutorialService, SectionService } from './tuturial.service';
-import { CreateCourseDto } from './dto/course.dto';
-import { CreateTutorialDto } from './dto/tutorial.dto';
+import { CreateCourseDto, UpdateCourseDto } from './dto/course.dto';
+import { CreateTutorialDto, UpdateTutorialDto } from './dto/tutorial.dto';
 import { TutorialQueryDto } from './dto/query.dto';
-import { ICourse } from './intefaces/course.interface';
-import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
 
 @Controller('/api')
@@ -70,7 +68,7 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('course/:slug')
-  updateCourse(@Req() req: any, @Param('slug') slug: string, @Body() body: ICourse) {
+  updateCourse(@Req() req: any, @Param('slug') slug: string, @Body() body: UpdateCourseDto) {
     const { user } = req;
     return this.courseService.updateCourse(slug, body, user.username);
   }
@@ -149,7 +147,7 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Put('tutorial/:slug')
-  updateTutorial(@Req() req: any, @Param('slug') slug: string, @Body() body: ICourse) {
+  updateTutorial(@Req() req: any, @Param('slug') slug: string, @Body() body: UpdateTutorialDto) {
     const { user } = req;
     return this.tutorialService.updateTutorial(slug, body, user.username);
   }

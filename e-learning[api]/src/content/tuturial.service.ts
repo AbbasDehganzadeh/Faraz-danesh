@@ -41,7 +41,7 @@ export class TutorialService {
     return tutorial.save();
   }
   // update the tutorial by specified version
-  updateTutorial(slug: string, data: ITutorial, username: string) {
+  updateTutorial(slug: string, data: Partial<ITutorial>, username: string) {
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug },
       {
@@ -77,7 +77,7 @@ export class SectionService {
   constructor(
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
     @InjectModel('text') private texttSection: Model<TextSection>,
-  ) {}
+  ) { }
 
   AddSection(slug: string, data: any) {
     const tutorial = this.TutorialModel.findOneAndUpdate(
