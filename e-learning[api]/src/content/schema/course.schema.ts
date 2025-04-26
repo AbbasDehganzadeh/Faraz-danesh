@@ -32,7 +32,7 @@ class Course {
   draft: boolean;
 
   @Prop()
-  teachers: number[];
+  teachers: string[];
 
   @Prop()
   price: number;

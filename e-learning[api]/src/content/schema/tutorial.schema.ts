@@ -29,7 +29,7 @@ export class Tutorial {
   draft: boolean;
 
   @Prop()
-  teachers: number[];
+  teachers: string[];
 
   @Prop()
   price: number;
