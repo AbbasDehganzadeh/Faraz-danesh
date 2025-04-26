@@ -1,6 +1,6 @@
 import {
     IsInt,
-    IsNotEmptyObject,
+    IsNotEmpty,
     IsOptional,
     IsString,
     Max,
@@ -11,13 +11,13 @@ import { Type } from "class-transformer"
 
 export class CommentDto {
     @IsString()
-    @IsNotEmptyObject()
+    @IsNotEmpty()
     @MaxLength(250)
     @IsOptional()
     text: string;
 
     @Type(() => Number)
-    @Min(0)
+    @Min(1)
     @Max(5)
     @IsInt()
     rate: number;
