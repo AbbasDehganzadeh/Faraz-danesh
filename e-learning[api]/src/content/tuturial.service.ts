@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { TutorialDocument } from './schema/tutorial.schema';
-import { TextSection } from './schema/section.schema';
+import { ImageSection, SectionType, TextSection, VideoSection } from './schema/section.schema';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
 import { createSlug, createVersion } from 'src/common/utils/content';
@@ -16,7 +16,9 @@ export class TutorialService {
     return this.TutorialModel.find();
   }
   async getTutorial(slug: string) {
-    return await this.TutorialModel.findOne({ slug: slug });
+    return await this.TutorialModel
+      .findOne({ slug: slug })
+      .populate<{ sections: SectionType }>('sections')
   }
   async createTutorial(data: ITutorial, username: string) {
     const slug = createSlug(data.name);
@@ -76,37 +78,66 @@ export class TutorialService {
 export class SectionService {
   constructor(
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
-    @InjectModel('text') private texttSection: Model<TextSection>,
+    @InjectModel('sections') private textSection: Model<TextSection>,
+    @InjectModel('sections') private imageSection: Model<ImageSection>,
+    @InjectModel('sections') private videoSection: Model<VideoSection>,
   ) { }
 
-  AddSection(slug: string, data: any) {
+  addSection(slug: string, Id: Types.ObjectId) {
     const tutorial = this.TutorialModel.findOneAndUpdate(
       { slug: slug },
-      { sections: data },
+      { $push: { sections: Id } },
     );
 
     return tutorial.sort('section.priority', { override: false });
   }
-  AddTextSection(slug: string, data: ITextSection) {
-    // const section = new this.texttSection(data);
-    const tutorial = this.TutorialModel.findOneAndUpdate(
-      { slug: slug },
-      { $push: { sections: data } },
-    );
-    return tutorial;
+  addTextSection(slug: string, data: ITextSection) {
+    const section = new this.textSection({
+      kind: 'text',
+      proority: data.priority,
+      version: data.version,
+      text: data.text,
+    })
+    section.save()
+    const objId = section._id
+    return this.addSection(slug, objId);
   }
-  AddFileSection(slug: string, data: IFileSection, file: Express.Multer.File) {
-    // doing some stuff with data
-    const path = `${file.path}`;
+  addFileSection(slug: string, data: IFileSection, file: Express.Multer.File) {
+    let objId = new Types.ObjectId()
+    const path = file.path;
     const size = file.size;
+    const type = file.mimetype;
 
-    const tutorial = this.TutorialModel.findOneAndUpdate(
-      { slug: slug },
-      { $push: { sections: { ...data, path, size } } },
-    );
-    return tutorial;
+    if (file.fieldname == "video") {
+      const section = new this.videoSection({
+        kind: 'video',
+        proority: data.priority,
+        version: data.version,
+        alt: data.alt,
+        type,
+        path,
+        size,
+      })
+      section.save()
+      objId = section._id
+    } else {
+      const section = new this.imageSection({
+        kind: 'image',
+        proority: data.priority,
+        version: data.version,
+        alt: data.alt,
+        type,
+        path,
+        size,
+      })
+      section.save()
+      objId = section._id
+    }
+    return this.addSection(slug, objId);
   }
+
   getFile(path: string) {
     return path;
   }
+
 }

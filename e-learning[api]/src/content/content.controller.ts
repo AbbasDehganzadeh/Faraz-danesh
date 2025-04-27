@@ -114,7 +114,7 @@ export class ContentController {
   @Post('tutorial/:slug/section')
   updateSection(@Param('slug') slug: string, @Body() body: ITextSection) {
     console.debug({ body });
-    return this.sectionService.AddTextSection(slug, body);
+    return this.sectionService.addTextSection(slug, body);
   }
   @Roles(roles.TEACHER)
   // @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -134,7 +134,7 @@ export class ContentController {
         .build()
     ) file: Express.Multer.File,
   ) {
-    return this.sectionService.AddFileSection(slug, body, file);
+    return this.sectionService.addFileSection(slug, body, file);
   }
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -154,7 +154,7 @@ export class ContentController {
         .build()
     ) file: Express.Multer.File,
   ) {
-    return this.sectionService.AddFileSection(slug, body, file);
+    return this.sectionService.addFileSection(slug, body, file);
   }
   @Get('content/asset/')
   getAsset(@Query('path') path: string, @Res() res: Response) {
