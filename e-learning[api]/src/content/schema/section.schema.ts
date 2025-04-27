@@ -30,16 +30,16 @@ export class Section {
   priority: number;
 }
 
-@Schema({ _id: false })
+@Schema()
 export class TextSection extends Section {
   @Prop()
   text: string;
 }
 
-@Schema({ _id: false })
+@Schema()
 export class ImageSection extends Section {
-  @Prop({ enum: ImageType })
-  type: ImageType;
+  @Prop()
+  type: string;
 
   @Prop()
   alt: string;
@@ -57,10 +57,10 @@ export class ImageSection extends Section {
   aspect: string;
 }
 
-@Schema({ _id: false })
+@Schema()
 export class VideoSection extends Section {
-  @Prop({ enum: VideoType })
-  type: VideoType;
+  @Prop()
+  type: string;
 
   @Prop()
   alt: string;
