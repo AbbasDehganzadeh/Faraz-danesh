@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   Post,
   Put,
   Query,
@@ -35,7 +36,7 @@ export class ContentController {
     private courseService: CourseService,
     private tutorialService: TutorialService,
     private sectionService: SectionService,
-  ) {}
+  ) { }
   @Get('course')
   getCourses() {
     return this.courseService.findCourses();
@@ -116,15 +117,23 @@ export class ContentController {
     return this.sectionService.AddTextSection(slug, body);
   }
   @Roles(roles.TEACHER)
-  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
+  // @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @UseInterceptors(FileInterceptor('image', { dest: 'Images' }))
   @Post('tutorial/:slug/image')
   updateImageSection(
     @Param('slug') slug: string,
     @Body() body: IFileSection,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /image\/(jpeg|png)/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 100 * 1024, // kb
+        })
+        .build()
+    ) file: Express.Multer.File,
   ) {
-    console.debug({ slug, body, file });
     return this.sectionService.AddFileSection(slug, body, file);
   }
   @Roles(roles.TEACHER)
@@ -134,9 +143,17 @@ export class ContentController {
   updateVideoSection(
     @Param('slug') slug: string,
     @Body() body: IFileSection,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /video\/(mp4)/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 100 * 1024 * 1024, // mb
+        })
+        .build()
+    ) file: Express.Multer.File,
   ) {
-    console.debug({ slug, body, file });
     return this.sectionService.AddFileSection(slug, body, file);
   }
   @Get('content/asset/')
