@@ -89,7 +89,9 @@ export class SectionService {
       { $push: { sections: Id } },
     );
 
-    return tutorial.sort('section.priority', { override: false });
+    return tutorial
+      .populate<{ sections: SectionType }>('sections')
+      .sort('section.priority', { override: false });
   }
   addTextSection(slug: string, data: ITextSection) {
     const section = new this.textSection({
