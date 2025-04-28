@@ -39,18 +39,17 @@ export class TutorialService {
     return tutorial.save();
   }
   // update the tutorial by specified version
-  updateTutorial(slug: string, data: Partial<ITutorial>, username: string) {
-    const tutorial = this.TutorialModel.findOneAndUpdate(
-      { slug },
-      {
-        name: data.name,
-        version: data.version,
-        description: data.description,
-        price: data.price,
-        tags: data.tags,
-        $addToSet: { versions: data.version, teachers: username },
-      },
-    );
+  async updateTutorial(slug: string, data: Partial<ITutorial>, username: string) {
+    const tutorial = await this.TutorialModel.findOne({ slug });
+    if (tutorial) {
+      tutorial.name = data.name ?? tutorial.name
+      tutorial.description = data.description ?? tutorial.description
+      tutorial.price = data.price ?? tutorial.price
+      tutorial.tags = data.tags ?? tutorial.tags
+      tutorial.teachers = [...tutorial.teachers, username]
+      tutorial.versions = [...tutorial.versions, data.version!]
+      tutorial.save()
+    }
     return tutorial;
   }
   //TODO makePublish [generic function]

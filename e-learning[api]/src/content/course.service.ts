@@ -5,7 +5,6 @@ import { CourseDocument } from './schema/course.schema';
 import { ICourse } from './intefaces/course.interface';
 import { createSlug, createVersion } from 'src/common/utils/content';
 import { Tutorial } from './schema/tutorial.schema';
-import { use } from 'passport';
 
 @Injectable()
 export class CourseService {
@@ -53,19 +52,17 @@ export class CourseService {
     return course;
   }
   // update the course by specified version
-  updateCourse(slug: string, data: Partial<ICourse>, username: string) {
-    const course = this.courseModel.findOneAndUpdate(
-      { slug },
-      {
-        name: data.name,
-        version: data.version,
-        intro: data.intro,
-        description: data.description,
-        price: data.price,
-        tags: data.tags,
-        $addToSet: { versions: data.version, teachers: username },
-      },
-    );
+  async updateCourse(slug: string, data: Partial<ICourse>, username: string) {
+    const course = await this.courseModel.findOne({ slug });
+    if (course) {
+      course.name = data.name ?? course.name
+      course.description = data.description ?? course.description
+      course.price = data.price ?? course.price
+      course.tags = data.tags ?? course.tags
+      course.teachers = [...course.teachers, username]
+      course.versions = [...course.versions, data.version!]
+      course.save()
+    }
     return course;
   }
   //TODO makePublish [generic function]
