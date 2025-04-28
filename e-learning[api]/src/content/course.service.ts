@@ -26,8 +26,7 @@ export class CourseService {
     data.version = version;
     const entity = await this.getCourse(slug);
     if (entity?.slug === slug) {
-      console.log('updated', slug);
-      return this.updateCourse(slug, data, username);
+      return null;
     }
     console.log('created', slug);
     const course = new this.courseModel({

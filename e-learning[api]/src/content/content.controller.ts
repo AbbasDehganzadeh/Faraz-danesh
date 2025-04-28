@@ -48,10 +48,16 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('course')
-  newCourse(@Req() req: any, @Body() body: CreateCourseDto) {
+  async newCourse(@Req() req: any, @Body() body: CreateCourseDto) {
     const { user } = req;
-    console.debug({ body });
-    return this.courseService.createCourse(body, user.username);
+    const course = await this.courseService.createCourse(body, user.username);
+    if (course) {
+      return course
+    }
+    throw new HttpException(
+      'Course with this name exists',
+      HttpStatus.BAD_REQUEST,
+    );
   }
   @Post('course/:slug/content')
   addTutorial(@Param('slug') slug: string, @Body() body: { slug: string }) {
@@ -72,7 +78,15 @@ export class ContentController {
   @Put('course/:slug')
   updateCourse(@Req() req: any, @Param('slug') slug: string, @Body() body: UpdateCourseDto) {
     const { user } = req;
-    return this.courseService.updateCourse(slug, body, user.username);
+    this.courseService.getCourse(slug).then((course) => {
+      if (course?.teachers.includes(user.username)) {
+        return this.courseService.updateCourse(slug, body, user.username);
+      }
+      throw new HttpException(
+        'user is not in teachers',
+        HttpStatus.FORBIDDEN,
+      );
+    });
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -106,9 +120,16 @@ export class ContentController {
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('tutorial')
-  newTutorial(@Req() req: any, @Body() body: CreateTutorialDto) {
+  async newTutorial(@Req() req: any, @Body() body: CreateTutorialDto) {
     const { user } = req;
-    return this.tutorialService.createTutorial(body, user.username);
+    const tutorial = await this.tutorialService.createTutorial(body, user.username);
+    if (tutorial) {
+      return tutorial
+    }
+    throw new HttpException(
+      'Tutorial with this name exists',
+      HttpStatus.BAD_REQUEST,
+    );
   }
   @Roles(roles.TEACHER)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -118,7 +139,7 @@ export class ContentController {
     return this.sectionService.addTextSection(slug, body);
   }
   @Roles(roles.TEACHER)
-  // @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
+  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @UseInterceptors(FileInterceptor('image', { dest: 'Images' }))
   @Post('tutorial/:slug/image')
   updateImageSection(
@@ -167,7 +188,15 @@ export class ContentController {
   @Put('tutorial/:slug')
   updateTutorial(@Req() req: any, @Param('slug') slug: string, @Body() body: UpdateTutorialDto) {
     const { user } = req;
-    return this.tutorialService.updateTutorial(slug, body, user.username);
+    this.tutorialService.getTutorial(slug).then((tutorial) => {
+      if (tutorial?.teachers.includes(user.username)) {
+        return this.tutorialService.updateTutorial(slug, body, user.username);
+      }
+      throw new HttpException(
+        'user is not in teachers',
+        HttpStatus.FORBIDDEN,
+      );
+    });
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))

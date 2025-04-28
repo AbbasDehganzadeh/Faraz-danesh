@@ -26,8 +26,7 @@ export class TutorialService {
     data.version = version;
     const entity = await this.getTutorial(slug);
     if (entity?.slug == slug) {
-      console.debug('updated', slug);
-      return this.updateTutorial(slug, data, username);
+      return null;
     }
     console.debug('created', slug);
     const tutorial = new this.TutorialModel({
