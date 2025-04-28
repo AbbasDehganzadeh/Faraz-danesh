@@ -19,7 +19,7 @@ enum VideoType {
 }
 
 @Schema({ discriminatorKey: 'kind' })
-export class Section {
+export class BaseSection {
   @Prop({ enum: sectionType })
   kind: sectionType;
 
@@ -31,13 +31,13 @@ export class Section {
 }
 
 @Schema()
-export class TextSection extends Section {
+export class TextSection extends BaseSection {
   @Prop()
   text: string;
 }
 
 @Schema()
-export class ImageSection extends Section {
+export class ImageSection extends BaseSection {
   @Prop()
   type: string;
 
@@ -58,7 +58,7 @@ export class ImageSection extends Section {
 }
 
 @Schema()
-export class VideoSection extends Section {
+export class VideoSection extends BaseSection {
   @Prop()
   type: string;
 
@@ -75,6 +75,7 @@ export class VideoSection extends Section {
   frame: string;
 }
 
+export const SectionSchema = SchemaFactory.createForClass(BaseSection);
 export const TextSectionSchema = SchemaFactory.createForClass(TextSection);
 export const ImageSectionSchema = SchemaFactory.createForClass(ImageSection);
 export const VideoSectionSchema = SchemaFactory.createForClass(VideoSection);

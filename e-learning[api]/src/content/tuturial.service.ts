@@ -78,9 +78,9 @@ export class TutorialService {
 export class SectionService {
   constructor(
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
-    @InjectModel('sections') private textSection: Model<TextSection>,
-    @InjectModel('sections') private imageSection: Model<ImageSection>,
-    @InjectModel('sections') private videoSection: Model<VideoSection>,
+    @InjectModel('texts') private textSection: Model<TextSection>,
+    @InjectModel('images') private imageSection: Model<ImageSection>,
+    @InjectModel('videos') private videoSection: Model<VideoSection>,
   ) { }
 
   addSection(slug: string, Id: Types.ObjectId) {
@@ -94,7 +94,7 @@ export class SectionService {
   addTextSection(slug: string, data: ITextSection) {
     const section = new this.textSection({
       kind: 'text',
-      proority: data.priority,
+      priority: data.priority,
       version: data.version,
       text: data.text,
     })

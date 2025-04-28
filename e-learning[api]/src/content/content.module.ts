@@ -8,6 +8,7 @@ import { TutorialService, SectionService } from './tuturial.service'
 import { CourseSchema } from './schema/course.schema';
 import { TutorialSchema } from './schema/tutorial.schema';
 import {
+  SectionSchema,
   ImageSectionSchema,
   TextSectionSchema,
   VideoSectionSchema,
@@ -26,9 +27,10 @@ import {
           { name: 'video', schema: VideoSectionSchema },
         ],
       } /*name:tutorial.name*/,
-      { name: 'sections', schema: TextSectionSchema },
-      { name: 'sections', schema: ImageSectionSchema },
-      { name: 'sections', schema: VideoSectionSchema },
+      { name: 'sections', schema: SectionSchema },
+      { name: 'texts', schema: TextSectionSchema },
+      { name: 'images', schema: ImageSectionSchema },
+      { name: 'videos', schema: VideoSectionSchema },
     ]),
   ],
   controllers: [ContentController, CommentController],
