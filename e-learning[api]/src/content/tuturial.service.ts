@@ -23,8 +23,7 @@ export class TutorialService {
     data.version = version;
     const entity = await this.getTutorial(slug);
     if (entity?.slug == slug) {
-      console.debug('updated', slug);
-      return this.updateTutorial(slug, data, username);
+      return null;
     }
     console.debug('created', slug);
     const tutorial = new this.TutorialModel({
@@ -78,13 +77,17 @@ export class SectionService {
   ) { }
 
   async addSection(slug: string, data: ITextSection | IFileSection) {
+    const tutorial = await this.TutorialModel.findOne({ slug })
+    if (!tutorial?.versions.includes(data.version)) {
+      return null;
+    }
     const res = await this.TutorialModel.updateOne(
       { slug },
       { $push: { sections: data } },
     )
-    return res
+    return res.modifiedCount ? tutorial : null;
   }
-  
+
   async addTextSection(slug: string, data: ITextSection) {
     data.kind = 'text';
     const tutorial = await this.addSection(slug, data)

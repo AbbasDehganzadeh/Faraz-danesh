@@ -135,7 +135,6 @@ export class ContentController {
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('tutorial/:slug/section')
   updateSection(@Param('slug') slug: string, @Body() body: ITextSection) {
-    console.debug({ body });
     return this.sectionService.addTextSection(slug, body);
   }
   @Roles(roles.TEACHER)
