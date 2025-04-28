@@ -43,10 +43,13 @@ export class CourseService {
     });
     return course.save();
   }
-  async addTutorial(courseSlug: string, tutorialId: Types.ObjectId) {
+  async addTutorial(courseSlug: string, tid: Types.ObjectId, versions: string[], teachers: string[]) {
     const course = this.courseModel.updateOne(
       { slug: courseSlug },
-      { $push: { tutorials: tutorialId } },
+      {
+        $push: { tutorials: tid },
+        $addToSet: { versions: versions, teachers: teachers },
+      },
     );
     return course;
   }

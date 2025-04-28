@@ -56,8 +56,9 @@ export class ContentController {
   @Post('course/:slug/content')
   addTutorial(@Param('slug') slug: string, @Body() body: { slug: string }) {
     this.tutorialService.getTutorial(body.slug).then((tutorial) => {
-      if (tutorial?._id) {
-        return this.courseService.addTutorial(slug, tutorial._id);
+      if (tutorial) {
+        const { _id, versions, teachers } = tutorial
+        return this.courseService.addTutorial(slug, _id, versions, teachers);
       }
       throw new HttpException(
         'tutorial with correspnding slug not found',
