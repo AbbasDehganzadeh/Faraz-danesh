@@ -1,5 +1,5 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Comment } from './comments.schema';
 import { SectionType } from './section.schema';
 
@@ -22,8 +22,8 @@ export class Tutorial {
   @Prop()
   description: string;
 
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'sections' }] })
-  sections: MongooseSchema.Types.ObjectId[];
+  @Prop()
+  sections: SectionType[];
 
   @Prop({ default: true })
   draft: boolean;

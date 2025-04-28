@@ -10,4 +10,7 @@ export interface ITextSection extends IBaseSection {
 
 export interface IFileSection extends IBaseSection {
   alt: string;
+  path: string;
+  size: number;
+  type: string;
 }

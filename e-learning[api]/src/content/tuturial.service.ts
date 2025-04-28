@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { TutorialDocument } from './schema/tutorial.schema';
-import { ImageSection, SectionType, TextSection, VideoSection } from './schema/section.schema';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
 import { createSlug, createVersion } from 'src/common/utils/content';
@@ -16,9 +15,7 @@ export class TutorialService {
     return this.TutorialModel.find();
   }
   async getTutorial(slug: string) {
-    return await this.TutorialModel
-      .findOne({ slug: slug })
-      .populate<{ sections: SectionType }>('sections')
+    return await this.TutorialModel.findOne({ slug: slug });
   }
   async createTutorial(data: ITutorial, username: string) {
     const slug = createSlug(data.name);
@@ -26,7 +23,8 @@ export class TutorialService {
     data.version = version;
     const entity = await this.getTutorial(slug);
     if (entity?.slug == slug) {
-      return null;
+      console.debug('updated', slug);
+      return this.updateTutorial(slug, data, username);
     }
     console.debug('created', slug);
     const tutorial = new this.TutorialModel({
@@ -77,64 +75,32 @@ export class TutorialService {
 export class SectionService {
   constructor(
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
-    @InjectModel('texts') private textSection: Model<TextSection>,
-    @InjectModel('images') private imageSection: Model<ImageSection>,
-    @InjectModel('videos') private videoSection: Model<VideoSection>,
   ) { }
 
-  addSection(slug: string, Id: Types.ObjectId) {
-    const tutorial = this.TutorialModel.findOneAndUpdate(
-      { slug: slug },
-      { $push: { sections: Id } },
-    );
-
+  async addSection(slug: string, data: ITextSection | IFileSection) {
+    const res = await this.TutorialModel.updateOne(
+      { slug },
+      { $push: { sections: data } },
+    )
+    return res
+  }
+  
+  async addTextSection(slug: string, data: ITextSection) {
+    data.kind = 'text';
+    const tutorial = await this.addSection(slug, data)
     return tutorial
-      .populate<{ sections: SectionType }>('sections')
-      .sort('section.priority', { override: false });
   }
-  addTextSection(slug: string, data: ITextSection) {
-    const section = new this.textSection({
-      kind: 'text',
-      priority: data.priority,
-      version: data.version,
-      text: data.text,
-    })
-    section.save()
-    const objId = section._id
-    return this.addSection(slug, objId);
-  }
-  addFileSection(slug: string, data: IFileSection, file: Express.Multer.File) {
-    let objId = new Types.ObjectId()
-    const path = file.path;
-    const size = file.size;
-    const type = file.mimetype;
+  async addFileSection(slug: string, data: IFileSection, file: Express.Multer.File) {
+    data.path = file.path;
+    data.size = file.size;
 
-    if (file.fieldname == "video") {
-      const section = new this.videoSection({
-        kind: 'video',
-        proority: data.priority,
-        version: data.version,
-        alt: data.alt,
-        type,
-        path,
-        size,
-      })
-      section.save()
-      objId = section._id
+    if (file.fieldname == 'video') {
+      data.kind = 'video'
     } else {
-      const section = new this.imageSection({
-        kind: 'image',
-        proority: data.priority,
-        version: data.version,
-        alt: data.alt,
-        type,
-        path,
-        size,
-      })
-      section.save()
-      objId = section._id
+      data.kind = 'image'
     }
-    return this.addSection(slug, objId);
+    const tutorial = await this.addSection(slug, data)
+    return tutorial
   }
 
   getFile(path: string) {
