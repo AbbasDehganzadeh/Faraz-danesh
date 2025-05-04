@@ -69,11 +69,13 @@ export class AuthController {
     return this.authService.setApiKey(user.username, body.tutor);
   }
   @Post('refresh')
-  refresh() {
-    return this.authService.refreshToken();
+  @UseGuards(AuthGuard('jwt-refresh'))
+  refresh(@GetUsername() name: string, @GetUser('roke') role: number) {
+    return this.authService.refreshToken(name, role);
   }
   @Delete('logout')
-  logOut() {
+  @UseGuards(AuthGuard('jwt'))
+  logOut(@GetUsername() name: string) {
     return this.authService.logOut();
   }
 }

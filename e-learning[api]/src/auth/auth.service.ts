@@ -16,6 +16,7 @@ import {
   SignupStaffDto,
 } from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'jsonwebtoken';
 import { plainToClass } from 'class-transformer';
 import { roles } from './roles.enum';
 import { RedisService } from 'src/redisdb/redis.service';
@@ -126,8 +127,25 @@ export class AuthService {
     }
     return false;
   }
-  createJwt(username: string, role: roles) {
-    return this.jwtService.sign({ username, role }, { secret: 'super secret' });
+  async createJwt(username: string, role: roles) {
+    const payload: JwtPayload = {
+      username,
+      role,
+    };
+    const [at, rt] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: 'super secret',
+        expiresIn: '10m',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: 'super secret',
+        expiresIn: '1d',
+      }),
+    ]);
+    return {
+      access_token: at,
+      refresh_token: rt,
+    };
   }
   createPassword(password: string) {
     const salt = randomBytes(16).toString();
