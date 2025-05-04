@@ -21,6 +21,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
 import { roles } from './roles.enum';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import { GetUsername } from '../common/decorators/get-username.decorator';
 
 @Controller('api/auth')
 export class AuthController {

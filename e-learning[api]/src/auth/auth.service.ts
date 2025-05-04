@@ -54,18 +54,21 @@ export class AuthService {
       password: hashedpass,
       role: data.role,
     });
-    this.users.save(user);
-
-    const token = this.createJwt(user.uname, user.role);
-    return { token };
+    try {
+      this.users.save(user);
+    } catch (err) {
+      console.info({ err });
+    }
+    const tokens = this.createJwt(user.uname, user.role);
+    return tokens
   }
   async logIn(data: LoginUserDto) {
     const { username, password } = data;
     const validuser = await this.validateUser(username, password);
 
     if (validuser) {
-      const token = this.createJwt(username, validuser.role);
-      return { token };
+      const tokens = this.createJwt(username, validuser.role);
+      return tokens ;
     }
   }
   async signUpStaff(data: SignupStaffDto) {
@@ -93,8 +96,8 @@ export class AuthService {
   getApiKey() {
     return 'api-key get';
   }
-  refreshToken() {
-    return 'tokens are created';
+  refreshToken(username: string, role: number) {
+    return this.createJwt(username, role);
   }
   logOut() {
     return 'user logged out';
