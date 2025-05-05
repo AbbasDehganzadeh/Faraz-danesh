@@ -37,11 +37,9 @@ export class AuthService {
     const user = await this.users.findOne({ where: { uname: username } });
     return user;
   }
-  async getMe(data: { username: string }) {
-    const user = await this.getUser(data.username);
+  async getMe(username: string) {
+    const user = await this.getUser(username);
     const result = plainToClass(ResponseUserDto, user);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const { password, ...result } = user;
     return result;
   }
   signup(data: SignupUserDto) {

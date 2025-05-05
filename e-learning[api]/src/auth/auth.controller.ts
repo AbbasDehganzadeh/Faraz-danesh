@@ -28,13 +28,10 @@ import { GetUsername } from '../common/decorators/get-username.decorator';
 export class AuthController {
   constructor(private authService: AuthService) { }
 
-  @Roles(roles.STUDENT, roles.TEACHER, roles.SUPERVISOR)
-  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
+  @UseGuards(AuthGuard('jwt'))
   @Get('me')
-  getUser(@Req() req: any): Promise<ResponseUserDto> {
-    const { user } = req;
-    console.info({ user });
-    return this.authService.getMe(user); //TODO: dynamic ID base on jwt token
+  getUser(@GetUsername() username: string): Promise<ResponseUserDto> {
+    return this.authService.getMe(username);
   }
   @Post('signup')
   signup(@Body() body: SignupUserDto) {
