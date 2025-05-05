@@ -28,7 +28,7 @@ export class AuthService {
     @InjectRepository(User) private users: Repository<User>,
     private jwtService: JwtService,
     private redisService: RedisService,
-  ) {}
+  ) { }
   async getUserById(id: number) {
     const user = await this.users.findOneBy({ id });
     return user;
@@ -68,7 +68,7 @@ export class AuthService {
 
     if (validuser) {
       const tokens = this.createJwt(username, validuser.role);
-      return tokens ;
+      return tokens;
     }
   }
   async signUpStaff(data: SignupStaffDto) {
@@ -95,6 +95,13 @@ export class AuthService {
   }
   getApiKey() {
     return 'api-key get';
+  }
+  async loginGithub(username: string) {
+    const validuser = await this.getUser(username)
+    if (validuser) {
+      const tokens = this.createJwt(username, validuser.role);
+      return tokens;
+    }
   }
   refreshToken(username: string, role: number) {
     return this.createJwt(username, role);

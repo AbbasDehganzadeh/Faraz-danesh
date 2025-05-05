@@ -26,7 +26,7 @@ import { GetUsername } from '../common/decorators/get-username.decorator';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Roles(roles.STUDENT, roles.TEACHER, roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
@@ -70,6 +70,23 @@ export class AuthController {
     const { user } = req;
     return this.authService.setApiKey(user.username, body.tutor);
   }
+
+  @UseGuards(AuthGuard('github'))
+  @Get('github/login')
+  async login_gh() {}
+  @Get('github/cb')
+  @UseGuards(AuthGuard('github'))
+  async callbk_gh(@GetUsername() username: string) {
+    const tokens = await this.authService.loginGithub(username);
+    if (tokens) {
+      return tokens;
+    }
+    throw new HttpException(
+      "You are not signed in yet!",
+      HttpStatus.UNAUTHORIZED,
+    )
+  }
+
   @Post('refresh')
   @UseGuards(AuthGuard('jwt-refresh'))
   refresh(@GetUsername() name: string, @GetUser('roke') role: number) {
