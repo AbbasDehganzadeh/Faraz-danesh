@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,11 +13,27 @@ import { RedisModule } from './redisdb/redis.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
-    TypeOrmModule.forRoot({
-      type: 'better-sqlite3', //NOTE: use postgres later!
-      database: './auth.sql',
-      entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => {
+        switch (process.env.environment) {
+          case 'test':
+            return {
+              type: 'sqlite',
+              database: ':memory:',
+              entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
+              synchronize: true,
+            }
+          //NOTE: use postgres in production mode!
+          default: // dev
+            return {
+              type: 'better-sqlite3', //NOTE: use postgres later!
+              database: './auth.sql',
+              entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
+              synchronize: true,
+            }
+        }
+      },
+      // inject: [ConfigService]
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/elearning'),
     AuthModule,
