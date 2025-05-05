@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -26,6 +27,7 @@ const KEY_SECRET = 'KEY_SECRET';
 export class AuthService {
   constructor(
     @InjectRepository(User) private users: Repository<User>,
+    private configService: ConfigService,
     private jwtService: JwtService,
     private redisService: RedisService,
   ) { }
@@ -142,11 +144,11 @@ export class AuthService {
     };
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: 'super secret',
+        secret: this.configService.get<string>('JWT_AUTH_SECRET'),
         expiresIn: '10m',
       }),
       this.jwtService.signAsync(payload, {
-        secret: 'super secret',
+        secret: this.configService.get<string>('JWT_AUTH_SECRET'),
         expiresIn: '1d',
       }),
     ]);

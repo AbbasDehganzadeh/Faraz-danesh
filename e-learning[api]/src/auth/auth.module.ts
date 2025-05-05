@@ -8,6 +8,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
+import { ConfigService } from '@nestjs/config';
 // import { RolesGuard } from './decorators/roles.guard';
 // import { APP_GUARD } from '@nestjs/core';
 
@@ -15,8 +16,11 @@ import { GithubStrategy } from './strategies/github.strategy';
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
-    JwtModule.register({
-      secret: 'super secret',
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_AUTH_SECRET'),
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
