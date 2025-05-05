@@ -44,7 +44,7 @@ export class AuthService {
     const result = plainToClass(ResponseUserDto, user);
     return result;
   }
-  signup(data: SignupUserDto) {
+  async signup(data: SignupUserDto) {
     const hashedpass = this.createPassword(data.password);
     const user = this.users.create({
       fname: data.firstname,
@@ -55,9 +55,15 @@ export class AuthService {
       role: data.role,
     });
     try {
-      this.users.save(user);
+      await this.users.save(user)
     } catch (err) {
-      console.info({ err });
+      if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
+        console.info(err.message);
+        throw new HttpException(
+          "username, email, or phone must be unique!",
+          HttpStatus.BAD_REQUEST,
+        )
+      }
     }
     const tokens = this.createJwt(user.uname, user.role);
     return tokens
