@@ -41,6 +41,39 @@ describe('Auth module', () => {
         expect(resp.body).toBeDefined();
         expect(resp.body['access_token']).toBeTruthy();
       });
+
+      test('BAD_REQUEST response', async () => {
+        // duplicate data
+        const payload = {
+          firstname: 'test',
+          lastname: 'test',
+          username: 'test',
+          phone: '0123456789',
+          email: 'test@test.com',
+          password: 'test1234',
+        };
+        const resp = await request(app.getHttpServer())
+          .post('/api/auth/signup')
+          .send(payload);
+        expect(resp.status).toBe(400);
+        expect(resp.body).toBeDefined();
+        expect(resp.body['message']).toBeTruthy();
+      });
+
+      test('BAD_REQUEST response', async () => {
+        // missing data
+        const payload = {
+          firstname: 'test',
+          lastname: 'test',
+          phone: '0123456789',
+        };
+        const resp = await request(app.getHttpServer())
+          .post('/api/auth/signup')
+          .send(payload);
+        expect(resp.status).toBe(400);
+        expect(resp.body).toBeDefined();
+        expect(resp.body['message']).toBeTruthy();
+      });
     });
 
     describe('POST /api/auth/login', () => {
@@ -55,6 +88,17 @@ describe('Auth module', () => {
         expect(resp.status).toBe(201);
         expect(resp.body).toBeDefined();
         expect(resp.body['access_token']).toBeTruthy();
+      });
+
+      test('BAD_REQUEST response', async () => {
+        // missing data
+        const payload = {};
+        const resp = await request(app.getHttpServer())
+          .post('/api/auth/login')
+          .send(payload);
+        expect(resp.status).toBe(400);
+        expect(resp.body).toBeDefined();
+        expect(resp.body['message']).toBeTruthy();
       });
     });
 
