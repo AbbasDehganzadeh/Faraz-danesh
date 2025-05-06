@@ -20,7 +20,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 import { plainToClass } from 'class-transformer';
 import { roles } from './roles.enum';
-import { RedisService } from 'src/redisdb/redis.service';
+import { RedisService } from '../../src/redisdb/redis.service';
 
 const KEY_SECRET = 'KEY_SECRET';
 @Injectable()

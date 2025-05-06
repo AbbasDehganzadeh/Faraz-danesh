@@ -21,9 +21,9 @@ import {
 import { ICourse } from './intefaces/course.interface';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
-import { RolesGuard } from 'src/auth/decorators/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.docorator';
-import { roles } from 'src/auth/roles.enum';
+import { RolesGuard } from '../auth/decorators/roles.guard';
+import { Roles } from '../auth/decorators/roles.docorator';
+import { roles } from '../auth/roles.enum';
 
 @Controller('/api')
 export class ContentController {
