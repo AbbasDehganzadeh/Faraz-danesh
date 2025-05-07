@@ -6,13 +6,19 @@ import { PassportModule } from '@nestjs/passport';
 import { User } from './entities/user.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { GithubStrategy } from './strategies/github.strategy';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
-    JwtModule.register({
-      secret: 'super secret',
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_AUTH_SECRET'),
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
@@ -20,6 +26,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     AuthService,
     JwtService,
     JwtStrategy,
+    JwtRefreshStrategy,
+    GithubStrategy,
     // { provide: APP_GUARD, useClass: RolesGuard }, //? It shoudn't be commented
   ],
   exports: [AuthService, JwtModule, JwtStrategy], //! remove it after authorization test;

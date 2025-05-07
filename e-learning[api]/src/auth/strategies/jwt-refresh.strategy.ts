@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -5,15 +6,20 @@ import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from 'jsonwebtoken';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get<string>('JWT_AUTH_SECRET'),
+      passReqToCallback: true,
     });
   }
-  validate(token: JwtPayload) {
+  validate(req: Request, token: JwtPayload) {
     console.log('TokenType:  %T', token);
-    return { username: token.username, role: token.role };
+    const rt = req?.get('authorization')?.replace('Bearer', '').trim();
+    return { username: token.username, role: token.role, refreshToken: rt };
   }
 }

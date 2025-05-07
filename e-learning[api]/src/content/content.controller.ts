@@ -17,12 +17,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/decorators/roles.guard';
-import { Response } from 'express';
-import { Roles } from 'src/auth/decorators/roles.docorator';
-import { roles } from 'src/common/enum/roles.enum';
+import { RolesGuard } from '../auth/decorators/roles.guard';
+import { Roles } from '../auth/decorators/roles.docorator';
+import { roles } from '../common/enum/roles.enum';
 import { CourseService } from './course.service';
 import { TutorialService, SectionService } from './tuturial.service';
 import { CreateCourseDto, UpdateCourseDto } from './dto/course.dto';
@@ -36,7 +36,7 @@ export class ContentController {
     private courseService: CourseService,
     private tutorialService: TutorialService,
     private sectionService: SectionService,
-  ) { }
+  ) {}
   @Get('course')
   getCourses() {
     return this.courseService.findCourses();

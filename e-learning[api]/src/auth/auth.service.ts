@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -16,15 +17,17 @@ import {
   SignupStaffDto,
 } from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'jsonwebtoken';
 import { plainToClass } from 'class-transformer';
-import { roles } from 'src/common/enum/roles.enum';
-import { RedisService } from 'src/redisdb/redis.service';
+import { roles } from '../common/enum/roles.enum';
+import { RedisService } from '../../src/redisdb/redis.service';
 
 const KEY_SECRET = 'KEY_SECRET';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private users: Repository<User>,
+    private configService: ConfigService,
     private jwtService: JwtService,
     private redisService: RedisService,
   ) {}
@@ -36,14 +39,12 @@ export class AuthService {
     const user = await this.users.findOne({ where: { uname: username } });
     return user;
   }
-  async getMe(data: { username: string }) {
-    const user = await this.getUser(data.username);
+  async getMe(username: string) {
+    const user = await this.getUser(username);
     const result = plainToClass(ResponseUserDto, user);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const { password, ...result } = user;
     return result;
   }
-  signup(data: SignupUserDto) {
+  async signup(data: SignupUserDto) {
     const hashedpass = this.createPassword(data.password);
     const user = this.users.create({
       fname: data.firstname,
@@ -53,18 +54,27 @@ export class AuthService {
       password: hashedpass,
       role: data.role,
     });
-    this.users.save(user);
-
-    const token = this.createJwt(user.uname, user.role);
-    return { token };
+    try {
+      await this.users.save(user)
+    } catch (err) {
+      if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
+        console.info(err.message);
+        throw new HttpException(
+          "username, email, or phone must be unique!",
+          HttpStatus.BAD_REQUEST,
+        )
+      }
+    }
+    const tokens = this.createJwt(user.uname, user.role);
+    return tokens
   }
   async logIn(data: LoginUserDto) {
     const { username, password } = data;
     const validuser = await this.validateUser(username, password);
 
     if (validuser) {
-      const token = this.createJwt(username, validuser.role);
-      return { token };
+      const tokens = this.createJwt(username, validuser.role);
+      return tokens;
     }
   }
   async signUpStaff(data: SignupStaffDto) {
@@ -101,8 +111,15 @@ export class AuthService {
     }
     return tokens;
   }
-  refreshToken() {
-    return 'tokens are created';
+  async loginGithub(username: string) {
+    const validuser = await this.getUser(username)
+    if (validuser) {
+      const tokens = this.createJwt(username, validuser.role);
+      return tokens;
+    }
+  }
+  refreshToken(username: string, role: number) {
+    return this.createJwt(username, role);
   }
   logOut() {
     return 'user logged out';
@@ -135,8 +152,25 @@ export class AuthService {
     }
     return false;
   }
-  createJwt(username: string, role: roles) {
-    return this.jwtService.sign({ username, role }, { secret: 'super secret' });
+  async createJwt(username: string, role: roles) {
+    const payload: JwtPayload = {
+      username,
+      role,
+    };
+    const [at, rt] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get<string>('JWT_AUTH_SECRET'),
+        expiresIn: '10m',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get<string>('JWT_AUTH_SECRET'),
+        expiresIn: '1d',
+      }),
+    ]);
+    return {
+      access_token: at,
+      refresh_token: rt,
+    };
   }
   createPassword(password: string) {
     const salt = randomBytes(16).toString();
