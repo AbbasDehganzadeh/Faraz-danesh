@@ -23,7 +23,7 @@ import * as cors from 'cors';
               database: ':memory:',
               entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
               synchronize: true,
-            }
+            };
           //NOTE: use postgres in production mode!
           default: // dev
             return {
@@ -31,7 +31,7 @@ import * as cors from 'cors';
               database: './auth.sql',
               entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
               synchronize: true,
-            }
+            };
         }
       },
     }),

@@ -1,4 +1,4 @@
-import { PartialType } from "@nestjs/mapped-types";
+import { PartialType } from '@nestjs/mapped-types';
 import {
   IsInt,
   IsNotEmpty,
@@ -9,7 +9,7 @@ import {
   Matches,
   MinLength,
   ValidateIf,
-} from "class-validator";
+} from 'class-validator';
 
 export class CreateTutorialDto {
   @IsString()
@@ -27,7 +27,7 @@ export class CreateTutorialDto {
   @IsOptional()
   description: string;
 
-  @ValidateIf(v => v % 1000 === 0)
+  @ValidateIf((v) => v % 1000 === 0)
   @IsPositive()
   @IsInt()
   @IsOptional()
@@ -40,4 +40,4 @@ export class CreateTutorialDto {
   tags: string[];
 }
 
-export class UpdateTutorialDto extends PartialType(CreateTutorialDto) { }
+export class UpdateTutorialDto extends PartialType(CreateTutorialDto) {}

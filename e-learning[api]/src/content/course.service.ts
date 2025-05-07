@@ -10,14 +10,14 @@ import { Tutorial } from './schema/tutorial.schema';
 export class CourseService {
   constructor(
     @InjectModel('courses') private courseModel: Model<CourseDocument>,
-  ) { }
+  ) {}
   findCourses() {
     return this.courseModel.find();
   }
   async getCourse(slug: string) {
     return await this.courseModel
       .findOne({ slug: slug })
-      .populate<{ tutorials: Tutorial }>('tutorials')
+      .populate<{ tutorials: Tutorial }>('tutorials');
   }
   async createCourse(data: ICourse, username: string) {
     const slug = createSlug(data.name);
@@ -41,7 +41,12 @@ export class CourseService {
     });
     return course.save();
   }
-  async addTutorial(courseSlug: string, tid: Types.ObjectId, versions: string[], teachers: string[]) {
+  async addTutorial(
+    courseSlug: string,
+    tid: Types.ObjectId,
+    versions: string[],
+    teachers: string[],
+  ) {
     const course = this.courseModel.updateOne(
       { slug: courseSlug },
       {
@@ -55,13 +60,13 @@ export class CourseService {
   async updateCourse(slug: string, data: Partial<ICourse>, username: string) {
     const course = await this.courseModel.findOne({ slug });
     if (course) {
-      course.name = data.name ?? course.name
-      course.description = data.description ?? course.description
-      course.price = data.price ?? course.price
-      course.tags = data.tags ?? course.tags
-      course.teachers = [...course.teachers, username]
-      course.versions = [...course.versions, data.version!]
-      course.save()
+      course.name = data.name ?? course.name;
+      course.description = data.description ?? course.description;
+      course.price = data.price ?? course.price;
+      course.tags = data.tags ?? course.tags;
+      course.teachers = [...course.teachers, username];
+      course.versions = [...course.versions, data.version!];
+      course.save();
     }
     return course;
   }

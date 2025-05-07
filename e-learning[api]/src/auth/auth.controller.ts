@@ -26,7 +26,7 @@ import { GetUsername } from '../common/decorators/get-username.decorator';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
@@ -89,9 +89,9 @@ export class AuthController {
       return tokens;
     }
     throw new HttpException(
-      "You are not signed in yet!",
+      'You are not signed in yet!',
       HttpStatus.UNAUTHORIZED,
-    )
+    );
   }
 
   @Post('refresh')

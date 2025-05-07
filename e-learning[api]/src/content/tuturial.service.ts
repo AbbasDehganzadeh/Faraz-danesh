@@ -10,7 +10,7 @@ import { createSlug, createVersion } from 'src/common/utils/content';
 export class TutorialService {
   constructor(
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
-  ) { }
+  ) {}
   findTutorials() {
     return this.TutorialModel.find();
   }
@@ -39,16 +39,20 @@ export class TutorialService {
     return tutorial.save();
   }
   // update the tutorial by specified version
-  async updateTutorial(slug: string, data: Partial<ITutorial>, username: string) {
+  async updateTutorial(
+    slug: string,
+    data: Partial<ITutorial>,
+    username: string,
+  ) {
     const tutorial = await this.TutorialModel.findOne({ slug });
     if (tutorial) {
-      tutorial.name = data.name ?? tutorial.name
-      tutorial.description = data.description ?? tutorial.description
-      tutorial.price = data.price ?? tutorial.price
-      tutorial.tags = data.tags ?? tutorial.tags
-      tutorial.teachers = [...tutorial.teachers, username]
-      tutorial.versions = [...tutorial.versions, data.version!]
-      tutorial.save()
+      tutorial.name = data.name ?? tutorial.name;
+      tutorial.description = data.description ?? tutorial.description;
+      tutorial.price = data.price ?? tutorial.price;
+      tutorial.tags = data.tags ?? tutorial.tags;
+      tutorial.teachers = [...tutorial.teachers, username];
+      tutorial.versions = [...tutorial.versions, data.version!];
+      tutorial.save();
     }
     return tutorial;
   }
@@ -73,40 +77,43 @@ export class TutorialService {
 export class SectionService {
   constructor(
     @InjectModel('tutorials') private TutorialModel: Model<TutorialDocument>,
-  ) { }
+  ) {}
 
   async addSection(slug: string, data: ITextSection | IFileSection) {
-    const tutorial = await this.TutorialModel.findOne({ slug })
+    const tutorial = await this.TutorialModel.findOne({ slug });
     if (!tutorial?.versions.includes(data.version)) {
       return null;
     }
     const res = await this.TutorialModel.updateOne(
       { slug },
       { $push: { sections: data } },
-    )
+    );
     return res.modifiedCount ? tutorial : null;
   }
 
   async addTextSection(slug: string, data: ITextSection) {
     data.kind = 'text';
-    const tutorial = await this.addSection(slug, data)
-    return tutorial
+    const tutorial = await this.addSection(slug, data);
+    return tutorial;
   }
-  async addFileSection(slug: string, data: IFileSection, file: Express.Multer.File) {
+  async addFileSection(
+    slug: string,
+    data: IFileSection,
+    file: Express.Multer.File,
+  ) {
     data.path = file.path;
     data.size = file.size;
 
     if (file.fieldname == 'video') {
-      data.kind = 'video'
+      data.kind = 'video';
     } else {
-      data.kind = 'image'
+      data.kind = 'image';
     }
-    const tutorial = await this.addSection(slug, data)
-    return tutorial
+    const tutorial = await this.addSection(slug, data);
+    return tutorial;
   }
 
   getFile(path: string) {
     return path;
   }
-
 }

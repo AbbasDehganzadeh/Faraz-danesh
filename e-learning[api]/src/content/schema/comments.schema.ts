@@ -1,14 +1,14 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema } from '@nestjs/mongoose';
 
 @Schema()
 export class Comment {
   @Prop()
   id: string;
 
-  @Prop({length: 250})
+  @Prop({ length: 250 })
   text: string;
 
-  @Prop({isInteger: true})
+  @Prop({ isInteger: true })
   rate: number;
 
   @Prop()
@@ -16,5 +16,4 @@ export class Comment {
 
   @Prop()
   updatedAt: Date;
-
 }

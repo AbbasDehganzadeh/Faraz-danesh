@@ -55,18 +55,18 @@ export class AuthService {
       role: data.role,
     });
     try {
-      await this.users.save(user)
+      await this.users.save(user);
     } catch (err) {
       if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
         console.info(err.message);
         throw new HttpException(
-          "username, email, or phone must be unique!",
+          'username, email, or phone must be unique!',
           HttpStatus.BAD_REQUEST,
-        )
+        );
       }
     }
     const tokens = this.createJwt(user.uname, user.role);
-    return tokens
+    return tokens;
   }
   async logIn(data: LoginUserDto) {
     const { username, password } = data;
@@ -112,7 +112,7 @@ export class AuthService {
     return tokens;
   }
   async loginGithub(username: string) {
-    const validuser = await this.getUser(username)
+    const validuser = await this.getUser(username);
     if (validuser) {
       const tokens = this.createJwt(username, validuser.role);
       return tokens;

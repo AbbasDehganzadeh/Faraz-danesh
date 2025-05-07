@@ -1,4 +1,4 @@
 export interface IComment {
-    text: string,
-    rate: number,
+  text: string;
+  rate: number;
 }

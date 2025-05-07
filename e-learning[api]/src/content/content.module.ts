@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommentController } from './comments.controller';
 import { ContentController } from './content.controller';
-import { CommentService } from './comments.service'
-import { CourseService } from './course.service'
-import { TutorialService, SectionService } from './tuturial.service'
+import { CommentService } from './comments.service';
+import { CourseService } from './course.service';
+import { TutorialService, SectionService } from './tuturial.service';
 import { CourseSchema } from './schema/course.schema';
 import { TutorialSchema } from './schema/tutorial.schema';
 import {
@@ -31,4 +31,4 @@ import {
   controllers: [ContentController, CommentController],
   providers: [CommentService, CourseService, SectionService, TutorialService],
 })
-export class ContentModule { }
+export class ContentModule {}
