@@ -27,7 +27,7 @@ export class SignupUserDto {
   phone: string;
   @IsEmail()
   email: string;
-  @IsAlphanumeric()
+  @IsString()
   @MinLength(8)
   password: string;
 
@@ -37,6 +37,7 @@ export class SignupUserDto {
 export class LoginUserDto {
   @IsString()
   username: string;
+  @IsString()
   password: string;
 }
 
