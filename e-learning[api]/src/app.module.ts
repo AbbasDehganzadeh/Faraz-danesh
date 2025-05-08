@@ -35,7 +35,12 @@ import * as cors from 'cors';
         }
       },
     }),
-    MongooseModule.forRoot('mongodb://localhost:27017/elearning'),
+    MongooseModule.forRootAsync({
+      useFactory: (configservice: ConfigService) => ({
+        uri: configservice.get<string>('DB_MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
     AuthModule,
     ContentModule,
     RedisModule,
