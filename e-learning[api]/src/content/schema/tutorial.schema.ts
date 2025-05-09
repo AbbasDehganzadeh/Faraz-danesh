@@ -32,6 +32,9 @@ export class Tutorial {
   teachers: string[];
 
   @Prop()
+  studentsid: number[];
+
+  @Prop()
   price: number;
 
   @Prop()

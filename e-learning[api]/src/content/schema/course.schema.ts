@@ -35,6 +35,9 @@ class Course {
   teachers: string[];
 
   @Prop()
+  studentsid: number[];
+
+  @Prop()
   price: number;
 
   @Prop()
