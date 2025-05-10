@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { User } from './auth/entities/user.entity';
+import { User } from './user/entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ContentModule } from './content/content.module';
 import { RedisModule } from './redisdb/redis.module';
