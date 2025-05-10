@@ -15,11 +15,38 @@ import {
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: 'courses', schema: CourseSchema } /*name:Course.name*/,
+    MongooseModule.forFeatureAsync([
+      {
+        name: 'courses',
+        useFactory() {
+          const schema = CourseSchema;
+          schema.pre('save', function () {
+            let obj = this; // for clarity!
+            const len = obj.comments.length;
+            const ratings = obj.comments
+              .map((c) => c.rate)
+              .reduce((a, b) => a + b);
+            const rate = ratings / len;
+            obj.rate = rate;
+          });
+          return schema;
+        },
+      } /*name:Course.name*/,
       {
         name: 'tutorials',
-        schema: TutorialSchema,
+        useFactory() {
+          const schema = CourseSchema;
+          schema.pre('save', function () {
+            let obj = this; // for clarity!
+            const len = obj.comments.length;
+            const ratings = obj.comments
+              .map((c) => c.rate)
+              .reduce((a, b) => a + b);
+            const rate = ratings / len;
+            obj.rate = rate;
+          });
+          return schema;
+        },
         discriminators: [
           { name: 'text', schema: TextSectionSchema },
           { name: 'image', schema: ImageSectionSchema },
