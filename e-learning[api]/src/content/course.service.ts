@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CourseDocument } from './schema/course.schema';
 import { ICourse } from './intefaces/course.interface';
-import { createSlug, createVersion } from 'src/common/utils/content';
+import { createSlug, createVersion } from '../common/utils/content';
 import { Tutorial } from './schema/tutorial.schema';
 
 @Injectable()

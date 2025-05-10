@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { TutorialDocument } from './schema/tutorial.schema';
 import { ITutorial } from './intefaces/tutorial.interface';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
-import { createSlug, createVersion } from 'src/common/utils/content';
+import { createSlug, createVersion } from '../common/utils/content';
 
 @Injectable()
 export class TutorialService {
