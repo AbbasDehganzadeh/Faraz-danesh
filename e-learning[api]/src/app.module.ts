@@ -8,6 +8,7 @@ import { User } from './auth/entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ContentModule } from './content/content.module';
 import { RedisModule } from './redisdb/redis.module';
+import { UserModule } from './user/user.module';
 import * as morgan from 'morgan';
 import * as cors from 'cors';
 
@@ -55,6 +56,7 @@ import * as cors from 'cors';
     AuthModule,
     ContentModule,
     RedisModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
