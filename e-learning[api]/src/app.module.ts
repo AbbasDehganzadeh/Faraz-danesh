@@ -15,7 +15,7 @@ import * as cors from 'cors';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
-      useFactory: () => {
+      useFactory: (configservice: ConfigService) => {
         switch (process.env.environment) {
           case 'test':
             return {
@@ -25,6 +25,16 @@ import * as cors from 'cors';
               synchronize: true,
             };
           //NOTE: use postgres in production mode!
+          case 'prod':
+            return {
+              type: 'postgres',
+              port: configservice.get<number>('DB_PSQL_PORT'),
+              host: configservice.get<string>('DB_PSQL_HOST'),
+              username: configservice.get<string>('DB_PSQL_USER'),
+              password: configservice.get<string>('DB_PSQL_PASS'),
+              entities: [User], //! it should be `__dirname + '/../**/*.entity.{js,ts}'`
+              synchronize: true,
+            };
           default: // dev
             return {
               type: 'better-sqlite3', //NOTE: use postgres later!
@@ -34,6 +44,7 @@ import * as cors from 'cors';
             };
         }
       },
+      inject: [ConfigService],
     }),
     MongooseModule.forRootAsync({
       useFactory: (configservice: ConfigService) => ({
