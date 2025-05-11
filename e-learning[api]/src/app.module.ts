@@ -9,6 +9,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ContentModule } from './content/content.module';
 import { RedisModule } from './redisdb/redis.module';
 import { UserModule } from './user/user.module';
+import { CartModule } from './cart/cart.module';
+import { PaymentModule } from './payment/paynemt.module';
 import * as morgan from 'morgan';
 import * as cors from 'cors';
 
@@ -57,6 +59,8 @@ import * as cors from 'cors';
     ContentModule,
     RedisModule,
     UserModule,
+    CartModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
