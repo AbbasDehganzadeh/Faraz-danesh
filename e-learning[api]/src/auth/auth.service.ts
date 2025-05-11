@@ -7,61 +7,28 @@ import {
   timingSafeEqual,
 } from 'node:crypto';
 import { Buffer } from 'node:buffer';
-import {
-  LoginUserDto,
-  ResponseUserDto,
-  SignupUserDto,
-  SignupStaffDto,
-} from './dtos/user.dto';
+import { LoginUserDto, SignupUserDto, SignupStaffDto } from './dtos/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
-import { plainToClass } from 'class-transformer';
 import { roles } from '../common/enum/roles.enum';
-import { RedisService } from '../../src/redisdb/redis.service';
+import { RedisService } from '../redisdb/redis.service';
+import { UserService } from '../user/user.service';
 
 const KEY_SECRET = 'KEY_SECRET';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private users: Repository<User>,
     private configService: ConfigService,
+    private userService: UserService,
     private jwtService: JwtService,
     private redisService: RedisService,
   ) {}
-  async getUserById(id: number) {
-    const user = await this.users.findOneBy({ id });
-    return user;
-  }
-  async getUser(username: string) {
-    const user = await this.users.findOne({ where: { uname: username } });
-    return user;
-  }
-  async getMe(username: string) {
-    const user = await this.getUser(username);
-    const result = plainToClass(ResponseUserDto, user);
-    return result;
-  }
   async signup(data: SignupUserDto) {
     const hashedpass = this.createPassword(data.password);
-    const user = this.users.create({
-      fname: data.firstname,
-      lname: data.lastname,
-      uname: data.username,
-      email: data.email,
+    const user = await this.userService.createUser({
+      ...data,
       password: hashedpass,
-      role: data.role,
     });
-    try {
-      await this.users.save(user);
-    } catch (err) {
-      if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
-        console.info(err.message);
-        throw new HttpException(
-          'username, email, or phone must be unique!',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    }
     const tokens = this.createJwt(user.uname, user.role);
     return tokens;
   }
@@ -109,7 +76,7 @@ export class AuthService {
     return tokens;
   }
   async loginGithub(username: string) {
-    const validuser = await this.getUser(username);
+    const validuser = await this.userService.getUser(username);
     if (validuser) {
       const tokens = this.createJwt(username, validuser.role);
       return tokens;
@@ -122,7 +89,7 @@ export class AuthService {
     return 'user logged out';
   }
   async validateUser(username: string, password: string) {
-    const user = await this.getUser(username);
+    const user = await this.userService.getUser(username);
     if (user) {
       if (this.matchPassword(password, user.password)) {
         return user;
