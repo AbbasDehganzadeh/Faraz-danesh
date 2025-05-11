@@ -11,12 +11,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import {
-  LoginUserDto,
-  ResponseUserDto,
-  SignupStaffDto,
-  SignupUserDto,
-} from './dtos/user.dto';
+import { LoginUserDto, SignupStaffDto, SignupUserDto } from './dtos/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
@@ -28,11 +23,6 @@ import { GetUsername } from '../common/decorators/get-username.decorator';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('me')
-  getUser(@GetUsername() username: string): Promise<ResponseUserDto> {
-    return this.authService.getMe(username);
-  }
   @Post('signup')
   signup(@Body() body: SignupUserDto) {
     return this.authService.signup(body);
