@@ -1,6 +1,4 @@
-import { Exclude, Transform } from 'class-transformer';
 import {
-  IsAlphanumeric,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -48,35 +46,4 @@ export class SignupStaffDto extends SignupUserDto {
   @IsString()
   @IsNotEmpty()
   supervisorKey: string;
-}
-
-export class ResponseUserDto extends SignupUserDto {
-  @Transform((val) => {
-    if (val !== null || val !== undefined) {
-      return '';
-    }
-    return val;
-  })
-  firstname: string;
-  @Transform((val) => {
-    if (val !== null || val !== undefined) {
-      return '';
-    }
-    return val;
-  })
-  lastname: string;
-  @Transform((val) => {
-    if (val !== null || val !== undefined) {
-      return '';
-    }
-    return val;
-  })
-  phone: string;
-  @Exclude()
-  password: string;
-  role: roles;
-}
-
-export class RequestGetMeBodyDto {
-  //! Not implemented
 }

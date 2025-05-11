@@ -7,7 +7,7 @@ import {
   timingSafeEqual,
 } from 'node:crypto';
 import { Buffer } from 'node:buffer';
-import { LoginUserDto, SignupUserDto, SignupStaffDto } from './dtos/user.dto';
+import { LoginUserDto, SignupUserDto, SignupStaffDto } from './dtos/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 import { roles } from '../common/enum/roles.enum';

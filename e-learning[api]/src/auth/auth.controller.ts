@@ -11,7 +11,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { LoginUserDto, SignupStaffDto, SignupUserDto } from './dtos/user.dto';
+import { LoginUserDto, SignupStaffDto, SignupUserDto } from './dtos/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
