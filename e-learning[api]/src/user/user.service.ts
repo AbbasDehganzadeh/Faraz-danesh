@@ -35,10 +35,7 @@ export class UserService {
     } catch (err) {
       if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
         console.info(err.message);
-        throw new HttpException(
-          'username, email, or phone must be unique!',
-          HttpStatus.BAD_REQUEST,
-        );
+        return null;
       }
     }
     return user;

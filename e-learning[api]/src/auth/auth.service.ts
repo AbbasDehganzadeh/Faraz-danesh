@@ -29,6 +29,9 @@ export class AuthService {
       ...data,
       password: hashedpass,
     });
+    if (!user) {
+      return null;
+    }
     const tokens = this.createJwt(user.uname, user.role);
     return tokens;
   }

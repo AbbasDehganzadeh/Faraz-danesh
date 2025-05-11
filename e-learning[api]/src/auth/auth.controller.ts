@@ -24,12 +24,18 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  signup(@Body() body: SignupUserDto) {
-    return this.authService.signup(body);
+  async signup(@Body() body: SignupUserDto) {
+    const tokens = await this.authService.signup(body);
+    if (!tokens) {
+      throw new HttpException(
+        'username, email, or phone must be unique!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return tokens;
   }
   @Post('login')
   logIn(@Body() body: LoginUserDto) {
-    // const { username, password } = body;
     return this.authService.logIn(body);
   }
   @Post('signup/tutor')
@@ -39,7 +45,14 @@ export class AuthController {
       throw new HttpException('token is invalid', HttpStatus.UNAUTHORIZED);
     }
     user.role = roles.TEACHER;
-    return this.authService.signup(user);
+    const tokens = await this.authService.signup(body);
+    if (!tokens) {
+      throw new HttpException(
+        'username, email, or phone must be unique!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return tokens;
   }
   @Post('signup/visor')
   async visorSignup(@Body() body: SignupStaffDto) {
@@ -48,7 +61,14 @@ export class AuthController {
       throw new HttpException('token is invalid', HttpStatus.UNAUTHORIZED);
     }
     user.role = roles.SUPERVISOR;
-    return this.authService.signup(user);
+    const tokens = await this.authService.signup(body);
+    if (!tokens) {
+      throw new HttpException(
+        'username, email, or phone must be unique!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return tokens;
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))

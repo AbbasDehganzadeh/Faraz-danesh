@@ -1,5 +1,5 @@
-import { Exclude, Transform } from "class-transformer";
-import { roles } from "../../common/enum/roles.enum";
+import { Exclude, Transform } from 'class-transformer';
+import { roles } from '../../common/enum/roles.enum';
 
 export class CreateUserDto {
   firstname: string;
