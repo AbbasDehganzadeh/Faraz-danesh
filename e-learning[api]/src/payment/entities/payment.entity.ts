@@ -4,6 +4,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { paymentStatus } from '../../common/enum/payment-status.enum';
 
 @Entity()
 export class Payment {
@@ -16,8 +17,8 @@ export class Payment {
   @Column({ name: 'refcode' })
   referCode: string;
 
-  @Column({ name: 'stat' })
-  status: string;
+  @Column({ name: 'stat', enum: paymentStatus, default: paymentStatus.P })
+  status: paymentStatus;
 
   @Column({ type: 'text' })
   error: string;
