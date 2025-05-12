@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { roles } from '../../common/enum/roles.enum';
-import { Cart } from 'src/cart/entities/cart.entity';
+import { Cart } from '../../cart/entities/cart.entity';
+import { Payment } from '../../payment/entities/payment.entity';
 
 @Entity()
 export class User {
@@ -30,4 +31,7 @@ export class User {
 
   @OneToMany(() => Cart, (cart) => cart.user)
   carts: Cart[];
+
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payments: Payment[];
 }

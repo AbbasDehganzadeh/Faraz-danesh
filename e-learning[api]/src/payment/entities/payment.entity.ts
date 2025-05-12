@@ -2,9 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { paymentStatus } from '../../common/enum/payment-status.enum';
+import { Cart } from '../../cart/entities/cart.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity()
 export class Payment {
@@ -14,13 +18,13 @@ export class Payment {
   @Column({ name: 'pid', unique: true })
   paymentId: string;
 
-  @Column({ name: 'refcode' })
+  @Column({ name: 'refcode'})
   referCode: string;
 
   @Column({ name: 'stat', enum: paymentStatus, default: paymentStatus.P })
   status: paymentStatus;
 
-  @Column({ type: 'text' })
+  @Column({type: 'text'})
   error: string;
 
   @Column()
@@ -37,4 +41,10 @@ export class Payment {
 
   @Column()
   transactionDate: Date;
+
+  @OneToOne(() => Cart, (cart) => cart.payment)
+  cart: Cart;
+
+  @ManyToOne(() => User, (user) => user.payments)
+  user: User;
 }
