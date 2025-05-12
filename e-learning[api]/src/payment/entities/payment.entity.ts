@@ -18,13 +18,13 @@ export class Payment {
   @Column({ name: 'pid', unique: true })
   paymentId: string;
 
-  @Column({ name: 'refcode'})
+  @Column({ name: 'refcode' })
   referCode: string;
 
   @Column({ name: 'stat', enum: paymentStatus, default: paymentStatus.P })
   status: paymentStatus;
 
-  @Column({type: 'text'})
+  @Column({ type: 'text' })
   error: string;
 
   @Column()
