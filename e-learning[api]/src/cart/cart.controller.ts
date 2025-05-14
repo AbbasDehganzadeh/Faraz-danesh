@@ -17,8 +17,17 @@ export class CartController {
   discountCart(@Param('id') id: number) {
     return this.cartService.discountCart(id);
   }
-  @Delete('id')
+  @Delete(':id')
   destroyCart(@Param('id') id: number) {
     return this.cartService.destroyCart(id);
+  }
+
+  @Post(':id')
+  insertCart(@Param('id') id: number) {
+    return this.cartService.insertCart(id);
+  }
+  @Delete(':id/:pid')
+  removeCart(@Param('id') id: number, @Param('pid') pid: number) {
+    return this.cartService.removeCart(id, pid);
   }
 }

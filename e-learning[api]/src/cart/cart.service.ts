@@ -14,4 +14,11 @@ export class CartService {
   destroyCart(id: number) {
     return `Cart ${id}`;
   }
+
+  insertCart(id: number) {
+    return `Cart ${id}: `;
+  }
+  removeCart(id: number, pid: number) {
+    return `Cart ${id}: Item ${pid}`;
+  }
 }
