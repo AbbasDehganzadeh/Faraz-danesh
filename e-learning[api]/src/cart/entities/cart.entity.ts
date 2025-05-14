@@ -23,6 +23,13 @@ export class Cart {
   @Column({ name: 'd-code' })
   discountCode: string;
 
+  @Column({ name: 'price' })
+  totalPrice: number;
+
+  get finalPrice() {
+    return this.totalPrice - (this.totalPrice / 100) * this.discount;
+  }
+
   @CreateDateColumn()
   createdAt: Date;
 
