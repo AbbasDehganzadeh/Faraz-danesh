@@ -20,7 +20,7 @@ export class Cart {
   @Column({ default: 0 })
   discount: number;
 
-  @Column({ name: 'd-code' })
+  @Column({ name: 'd-code', nullable: true })
   discountCode: string;
 
   @Column({ name: 'price' })

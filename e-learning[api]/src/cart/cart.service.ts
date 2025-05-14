@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserService } from '../user/user.service';
 import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
 import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
@@ -9,23 +10,29 @@ import { InsertCartDto } from './dtos/cart-item.dto';
 @Injectable()
 export class CartService {
   constructor(
+    private userService: UserService,
     @InjectRepository(Cart) private carts: Repository<Cart>,
     @InjectRepository(CartItem) private cartitems: Repository<CartItem>,
   ) {}
 
   getCart(id: number) {
-    return `Cart ${id}`;
+    return this.carts.findOneBy({ id: id });
   }
-  createCart(data: CreateCartDto) {
-    console.info({ data }, data.items);
-    return 'Cart Creation!';
+  async createCart(data: CreateCartDto) {
+    const user = await this.userService.getUserById(data.userId);
+    const cart = this.carts.create({
+      user: user ?? {},
+      totalPrice: 1000, //! dummy data
+    });
+    return this.carts.save(cart);
   }
   discountCart(id: number, code: discountCartDto) {
     console.info({ code });
     return `Cart ${id} Off!!!`;
   }
-  destroyCart(id: number) {
-    return `Cart ${id}`;
+  async destroyCart(id: number) {
+    const cart = await this.carts.findBy({ id: id });
+    return this.carts.remove(cart);
   }
 
   insertCart(id: number, data: InsertCartDto) {
