@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
+import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
+import { InsertCartDto } from './dtos/cart-item.dto';
 
 @Injectable()
 export class CartService {
@@ -14,17 +16,20 @@ export class CartService {
   getCart(id: number) {
     return `Cart ${id}`;
   }
-  createCart() {
+  createCart(data: CreateCartDto) {
+    console.info({ data }, data.items);
     return 'Cart Creation!';
   }
-  discountCart(id: number) {
+  discountCart(id: number, code: discountCartDto) {
+    console.info({ code });
     return `Cart ${id} Off!!!`;
   }
   destroyCart(id: number) {
     return `Cart ${id}`;
   }
 
-  insertCart(id: number) {
+  insertCart(id: number, data: InsertCartDto) {
+    console.info({ data });
     return `Cart ${id}: `;
   }
   removeCart(id: number, pid: number) {

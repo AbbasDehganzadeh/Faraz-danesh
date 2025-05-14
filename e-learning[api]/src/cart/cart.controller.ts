@@ -1,5 +1,7 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CartService } from './cart.service';
+import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
+import { InsertCartDto } from './dtos/cart-item.dto';
 
 @Controller('api/cart')
 export class CartController {
@@ -10,12 +12,12 @@ export class CartController {
     return this.cartService.getCart(id);
   }
   @Post('')
-  createCart() {
-    return this.cartService.createCart();
+  createCart(@Body() cart: CreateCartDto) {
+    return this.cartService.createCart(cart);
   }
   @Post(':id/discount')
-  discountCart(@Param('id') id: number) {
-    return this.cartService.discountCart(id);
+  discountCart(@Param('id') id: number, @Body() Code: discountCartDto) {
+    return this.cartService.discountCart(id, Code);
   }
   @Delete(':id')
   destroyCart(@Param('id') id: number) {
@@ -23,8 +25,8 @@ export class CartController {
   }
 
   @Post(':id')
-  insertCart(@Param('id') id: number) {
-    return this.cartService.insertCart(id);
+  insertCart(@Param('id') id: number, @Body() item: InsertCartDto) {
+    return this.cartService.insertCart(id, item);
   }
   @Delete(':id/:pid')
   removeCart(@Param('id') id: number, @Param('pid') pid: number) {
