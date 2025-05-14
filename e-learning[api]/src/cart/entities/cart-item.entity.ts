@@ -9,18 +9,8 @@ export class CartItem {
   @Column({ name: 'pid' })
   productId: string;
 
-  @Column({ default: 0 })
-  discount: number;
-
-  @Column()
-  discountCode: string;
-
   @Column()
   price: number;
-
-  get finalPrice() {
-    return this.price - (this.price * this.discount) / 100;
-  }
 
   @ManyToOne(() => Cart, (cart) => cart.cartItems)
   cart: Cart;

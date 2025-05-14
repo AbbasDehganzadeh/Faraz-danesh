@@ -17,10 +17,10 @@ export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: 0 })
   discount: number;
 
-  @Column()
+  @Column({ name: 'd-code' })
   discountCode: string;
 
   @CreateDateColumn()
