@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Expose, Transform, Type } from 'class-transformer';
 import { ResponseUserDto } from '../../user/dtos/user.dto';
-import { InsertCartDto } from './cart-item.dto';
+import { CartItemDto, InsertCartDto } from './cart-item.dto';
 
 export class CreateCartDto {
   @Expose({ name: 'userid' })
@@ -53,4 +53,9 @@ export class ResponseCartDto {
 
   @Type(() => ResponseUserDto)
   user: ResponseUserDto;
+
+  @Expose({ name: 'cart_items' })
+  @Transform(({ obj }) => obj['cartItems'])
+  @Type(() => CartItemDto)
+  cartItems: CartItemDto;
 }
