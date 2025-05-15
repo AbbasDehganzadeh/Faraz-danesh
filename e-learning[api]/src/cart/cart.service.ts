@@ -35,11 +35,20 @@ export class CartService {
     return this.carts.remove(cart);
   }
 
-  insertCart(id: number, data: InsertCartDto) {
-    console.info({ data });
-    return `Cart ${id}: `;
+  async insertCart(id: number, data: InsertCartDto) {
+    const cart = await this.carts.findOneBy({ id: id });
+    if (cart) {
+      const cItem = this.cartitems.create({
+        pid: data.pid,
+        price: 1000, //! dummy data
+        cart: cart,
+      });
+      return this.cartitems.save(cItem);
+    }
+    return null;
   }
-  removeCart(id: number, pid: number) {
-    return `Cart ${id}: Item ${pid}`;
+  async removeCart(id: number, pid: number) {
+    const citem = await this.cartitems.findBy({ id: pid });
+    return this.cartitems.remove(citem);
   }
 }
