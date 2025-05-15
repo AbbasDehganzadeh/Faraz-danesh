@@ -16,7 +16,10 @@ export class CartService {
   ) {}
 
   getCart(id: number) {
-    return this.carts.findOneBy({ id: id });
+    return this.carts.findOne({
+      where: { id: id },
+      relations: { cartItems: true, user: true },
+    });
   }
   async createCart(data: CreateCartDto) {
     const user = await this.userService.getUserById(data.userId);

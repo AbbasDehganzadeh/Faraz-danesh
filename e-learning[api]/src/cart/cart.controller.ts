@@ -1,6 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  SerializeOptions,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
+import {
+  CreateCartDto,
+  discountCartDto,
+  ResponseCartDto,
+} from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
 
 @Controller('api/cart')
@@ -8,6 +22,8 @@ export class CartController {
   constructor(private cartService: CartService) {}
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: ResponseCartDto })
   recieveCart(@Param('id') id: number) {
     return this.cartService.getCart(id);
   }

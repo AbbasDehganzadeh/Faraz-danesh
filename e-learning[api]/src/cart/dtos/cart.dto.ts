@@ -5,7 +5,8 @@ import {
   IsNumberString,
   ValidateNested,
 } from 'class-validator';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
+import { ResponseUserDto } from '../../user/dtos/user.dto';
 import { InsertCartDto } from './cart-item.dto';
 
 export class CreateCartDto {
@@ -24,4 +25,32 @@ export class discountCartDto {
   @Expose({ name: 'discount-code' })
   @IsNumberString()
   discountCode: string;
+}
+
+export class ResponseCartDto {
+  id: number;
+
+  @Transform(({ value }) => value / 100)
+  discount: number;
+  @Expose({ name: 'discount-code' })
+  @Transform(({ obj }) => obj['discountCode'])
+  discountCode: string;
+
+  @Expose({ name: 'total_price' })
+  @Transform(({ obj }) => obj['totalPrice'])
+  totalPrice: number;
+  @Expose({ name: 'final_price' })
+  get finalPrice() {
+    return this.totalPrice - (this.totalPrice / 100) * this.discount;
+  }
+
+  @Expose({ name: 'created_at' })
+  @Transform(({ obj }) => obj['createdAt'])
+  createdAt: Date;
+  @Expose({ name: 'updated_at' })
+  @Transform(({ obj }) => obj['updatedAt'])
+  updatedAt: Date;
+
+  @Type(() => ResponseUserDto)
+  user: ResponseUserDto;
 }
