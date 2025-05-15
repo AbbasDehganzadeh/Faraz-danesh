@@ -57,5 +57,6 @@ import {
   ],
   controllers: [ContentController, CommentController],
   providers: [CommentService, CourseService, SectionService, TutorialService],
+  exports: [CourseService, TutorialService],
 })
 export class ContentModule {}
