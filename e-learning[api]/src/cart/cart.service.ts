@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
@@ -39,19 +39,32 @@ export class CartService {
   }
 
   async insertCart(id: number, data: InsertCartDto) {
-    const cart = await this.carts.findOneBy({ id: id });
-    if (cart) {
-      const cItem = this.cartitems.create({
-        pid: data.pid,
-        price: 1000, //! dummy data
-        cart: cart,
-      });
-      return this.cartitems.save(cItem);
+    try {
+      const cart = await this.carts.findOneByOrFail({ id: id });
+      if (cart) {
+        return this.addCart(cart, data);
+      }
+    } catch (err) {
+      console.info(err.message);
+      if (err instanceof EntityNotFoundError) {
+        throw new HttpException(
+          `Cart with ${id} not found!`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
     }
-    return null;
   }
   async removeCart(id: number, pid: number) {
     const citem = await this.cartitems.findBy({ id: pid });
     return this.cartitems.remove(citem);
+  }
+
+  private async addCart(cart: Cart, data: InsertCartDto) {
+    const cItem = this.cartitems.create({
+      pid: data.pid,
+      price: 1000, //! dummy data
+      cart: cart,
+    });
+    return this.cartitems.save(cItem);
   }
 }
