@@ -28,6 +28,8 @@ export class CartController {
     return this.cartService.getCart(id);
   }
   @Post('')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: ResponseCartDto })
   createCart(@Body() cart: CreateCartDto) {
     return this.cartService.createCart(cart);
   }

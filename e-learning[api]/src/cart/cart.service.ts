@@ -27,7 +27,11 @@ export class CartService {
       user: user ?? {},
       totalPrice: 1000, //! dummy data
     });
-    return this.carts.save(cart);
+    await this.carts.save(cart);
+    data.items.forEach((data) => {
+      this.addCart(cart, data);
+    });
+    return cart;
   }
   discountCart(id: number, code: discountCartDto) {
     console.info({ code });
