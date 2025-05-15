@@ -2,8 +2,8 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class InsertCartDto {
-  @Expose({ name: 'pid' })
+  // @Expose({ name: 'pid' })
   @IsNotEmpty()
-  @IsUUID()
-  productId: string;
+  // @IsUUID()
+  pid: string;
 }

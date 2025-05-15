@@ -6,8 +6,8 @@ export class CartItem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'pid' })
-  productId: string;
+  @Column()
+  pid: string;
 
   @Column()
   price: number;
