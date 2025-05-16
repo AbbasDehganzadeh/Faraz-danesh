@@ -53,12 +53,21 @@ export class CartService {
     const cart = await this.carts.findBy({ id: id });
     return this.carts.remove(cart);
   }
+
   private async getOpenCart(uid: number) {
     const cart = await this.carts.findOne({
       relations: { user: true },
-      where: { status: CartStatus.Open, user: {id:uid} },
+      where: { status: CartStatus.Open, user: { id: uid } },
     });
     return cart;
+  }
+  private IsCartExists(id: number) {
+    return this.carts.exists({ where: { id: id } });
+  }
+  private async IsCartClosed(id: number) {
+    return this.carts.exists({
+      where: { id: id, status: CartStatus.Close },
+    });
   }
 
   async insertCart(id: number, data: InsertCartDto) {
