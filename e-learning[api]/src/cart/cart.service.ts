@@ -45,12 +45,22 @@ export class CartService {
     });
     return cart;
   }
-  discountCart(id: number, code: discountCartDto) {
-    console.info({ code });
-    return `Cart ${id} Off!!!`;
+  async discountCart(id: number, data: discountCartDto) {
+    if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
+      throw new HttpException(
+        `Cart with ID ${id} doesen't exist, or closed!`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const cart = await this.carts.findOneBy({ id: id });
+    if (cart?.discount) {
+      cart.discount += 5;
+      this.carts.save(cart);
+    }
+    return `Cart ${id}:${data.discountCode} Off!!!`;
   }
   async destroyCart(id: number) {
-    const cart = await this.carts.findBy({ id: id });
+    const cart = await this.carts.findBy({ id: id, status: CartStatus.Open });
     return this.carts.remove(cart);
   }
 
