@@ -81,22 +81,22 @@ export class CartService {
   }
 
   async insertCart(id: number, data: InsertCartDto) {
-    try {
-      const cart = await this.carts.findOneByOrFail({ id: id });
-      if (cart) {
-        return this.addCart(cart, data);
-      }
-    } catch (err) {
-      console.info(err.message);
-      if (err instanceof EntityNotFoundError) {
-        throw new HttpException(
-          `Cart with ${id} not found!`,
-          HttpStatus.NOT_FOUND,
-        );
-      }
+    if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
+      throw new HttpException(
+        `Cart with ID ${id} doesen't exist, or closed!`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
+    const cart = await this.carts.findOneBy({ id: id });
+    return this.addCart(cart!, data);
   }
   async removeCart(id: number, pid: number) {
+    if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
+      throw new HttpException(
+        `Cart with ID ${id} doesen't exist, or closed!`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const citem = await this.cartitems.findBy({ id: pid });
     return this.cartitems.remove(citem);
   }
