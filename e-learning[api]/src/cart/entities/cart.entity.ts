@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Payment } from '../../payment/entities/payment.entity';
 import { User } from '../../user/entities/user.entity';
+import { CartStatus } from '../../common/enum/cart-status.enum';
 import { CartItem } from './cart-item.entity';
 
 @Entity()
@@ -30,6 +31,9 @@ export class Cart {
     return this.totalPrice - (this.totalPrice / 100) * this.discount;
   }
 
+  @Column({ default: CartStatus.Open })
+  status: CartStatus;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -42,6 +46,9 @@ export class Cart {
   @ManyToOne(() => User, (user) => user.carts)
   user: User;
 
-  @OneToMany(() => CartItem, (citems) => citems.cart)
+  @OneToMany(() => CartItem, (citems) => citems.cart, {
+    cascade: true,
+    eager: true,
+  })
   cartItems: CartItem[];
 }
