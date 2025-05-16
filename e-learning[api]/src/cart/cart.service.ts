@@ -8,6 +8,7 @@ import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
 import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
+import { CartStatus } from 'src/common/enum/cart-status.enum';
 
 @Injectable()
 export class CartService {
@@ -26,7 +27,14 @@ export class CartService {
     });
   }
   async createCart(data: CreateCartDto) {
-    const user = await this.userService.getUserById(data.userId);
+    const userid = data.userId;
+    if (await this.getOpenCart(userid)) {
+      throw new HttpException(
+        `User has an open cart with ID ${userid}!`,
+        HttpStatus.CONFLICT,
+      );
+    }
+    const user = await this.userService.getUserById(userid);
     const cart = this.carts.create({
       user: user ?? {},
       totalPrice: 1000, //! dummy data
@@ -44,6 +52,13 @@ export class CartService {
   async destroyCart(id: number) {
     const cart = await this.carts.findBy({ id: id });
     return this.carts.remove(cart);
+  }
+  private async getOpenCart(uid: number) {
+    const cart = await this.carts.findOne({
+      relations: { user: true },
+      where: { status: CartStatus.Open, user: {id:uid} },
+    });
+    return cart;
   }
 
   async insertCart(id: number, data: InsertCartDto) {
