@@ -1,4 +1,4 @@
-import { Exclude, Transform } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import {
   IsAlphanumeric,
   IsEmail,
@@ -51,25 +51,29 @@ export class SignupStaffDto extends SignupUserDto {
 }
 
 export class ResponseUserDto extends SignupUserDto {
-  @Transform((val) => {
-    if (val !== null || val !== undefined) {
+  @Expose({name:'firstname'})
+  @Transform(({value}) => {
+    if (value !== null || value !== undefined) {
       return '';
     }
-    return val;
+    return value;
   })
-  firstname: string;
-  @Transform((val) => {
-    if (val !== null || val !== undefined) {
+  fname: string;
+  @Expose({name:'lastname'})
+  @Transform(({value}) => {
+    if (value !== null || value !== undefined) {
       return '';
     }
-    return val;
+    return value;
   })
-  lastname: string;
-  @Transform((val) => {
-    if (val !== null || val !== undefined) {
+  lname: string;
+  @Expose({name:'username'})
+  uname: string;
+  @Transform(({value}) => {
+    if (value !== null || value !== undefined) {
       return '';
     }
-    return val;
+    return value;
   })
   phone: string;
   @Exclude()
