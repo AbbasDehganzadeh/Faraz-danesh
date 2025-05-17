@@ -9,6 +9,7 @@ import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
 import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
+import { ICartContent } from './interfaces/cart-content.interface';
 
 @Injectable()
 export class CartService {
@@ -108,8 +109,8 @@ export class CartService {
   }
 
   private async addCart(cart: Cart, data: InsertCartDto) {
-    const product = await this.findProduct(data.pid);
-    if (!product) {
+    const content = await this.findContent(data.pid);
+    if (!content) {
       throw new HttpException(
         `Course, or tutorial with this ${data.pid} does'nt exists!`,
         HttpStatus.NOT_FOUND,
@@ -117,17 +118,17 @@ export class CartService {
     }
     const cItem = this.cartitems.create({
       pid: data.pid,
-      price: product.price, //! dummy data
+      price: content.price,
       cart: cart,
     });
     return this.cartitems.save(cItem);
   }
-  private async findProduct(id: string) {
+  private async findContent(id: string) {
     const [course, tutorial] = await Promise.all([
       this.courseService.getCourse(id),
       this.tutorialService.getTutorial(id),
     ]);
-    let result!: { price: number };
+    let result!: ICartContent;
     if (course) {
       result = { price: course.price };
     } else if (tutorial) {
