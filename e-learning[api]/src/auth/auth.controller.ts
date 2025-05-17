@@ -8,7 +8,6 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -63,9 +62,8 @@ export class AuthController {
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Post('key')
-  setApiKey(@Req() req: any, @Body() body: { tutor: string }) {
-    const { user } = req;
-    return this.authService.setApiKey(user.username, body.tutor);
+  setApiKey(@GetUsername() username: string, @Body() body: { tutor: string }) {
+    return this.authService.setApiKey(username, body.tutor);
   }
 
   @UseGuards(AuthGuard('github'))
