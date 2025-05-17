@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
-import { CourseService } from 'src/content/course.service';
-import { TutorialService } from 'src/content/tuturial.service';
+import { CourseService } from '../content/course.service';
+import { TutorialService } from '../content/tuturial.service';
+import { CartStatus } from '../common/enum/cart-status.enum';
 import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
 import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
-import { CartStatus } from 'src/common/enum/cart-status.enum';
 
 @Injectable()
 export class CartService {
