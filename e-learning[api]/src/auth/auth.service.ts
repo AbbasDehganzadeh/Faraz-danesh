@@ -128,12 +128,12 @@ export class AuthService {
     );
   }
 
-  encryptMessage(message: string) {
+  private encryptMessage(message: string) {
     const cipher = createHmac('sha512', KEY_SECRET);
     cipher.update(message);
     return cipher.digest('base64');
   }
-  matchKeys(payload: string, token: string) {
+  private matchKeys(payload: string, token: string) {
     const key = this.encryptMessage(payload);
     if (
       key.length === token.length &&
@@ -164,15 +164,15 @@ export class AuthService {
       refresh_token: rt,
     };
   }
-  createPassword(password: string) {
+  private createPassword(password: string) {
     const salt = randomBytes(16).toString();
     return this.encryptPassword(password, salt);
   }
-  encryptPassword(password: string, salt: string) {
+  private encryptPassword(password: string, salt: string) {
     const hashed = scryptSync(password, salt, 64);
     return `${salt}:${hashed}`;
   }
-  matchPassword(password: string, expectpassword: string) {
+  private matchPassword(password: string, expectpassword: string) {
     const [salt, key] = expectpassword.split(':');
     const encpass = this.encryptPassword(password, salt);
     const hashedpass = Buffer.from(encpass.split(':')[1]);
