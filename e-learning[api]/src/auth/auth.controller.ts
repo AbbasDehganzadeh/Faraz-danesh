@@ -22,12 +22,15 @@ import { Roles } from './decorators/roles.docorator';
 import { roles } from './roles.enum';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { GetUsername } from '../common/decorators/get-username.decorator';
+import { JwtGuard } from './guards/jwt.guard';
+import { GithubGuard } from './guards/github.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   @Get('me')
   getUser(@GetUsername() username: string): Promise<ResponseUserDto> {
     return this.authService.getMe(username);
@@ -60,17 +63,17 @@ export class AuthController {
     return this.authService.signup(user);
   }
   @Roles(roles.SUPERVISOR)
-  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
+  @UseGuards(JwtGuard, new RolesGuard(new Reflector()))
   @Post('key')
   setApiKey(@GetUsername() username: string, @Body() body: { tutor: string }) {
     return this.authService.setApiKey(username, body.tutor);
   }
 
-  @UseGuards(AuthGuard('github'))
+  @UseGuards(GithubGuard)
   @Get('github/login')
   async login_gh() {}
   @Get('github/cb')
-  @UseGuards(AuthGuard('github'))
+  @UseGuards(GithubGuard)
   async callbk_gh(@GetUsername() username: string) {
     const tokens = await this.authService.loginGithub(username);
     if (tokens) {
@@ -83,7 +86,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @UseGuards(JwtRefreshGuard)
   refresh(
     @GetUsername() name: string,
     @GetUser('id') id: number,
@@ -92,7 +95,7 @@ export class AuthController {
     return this.authService.refreshToken(id, name, role);
   }
   @Delete('logout')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   logOut(@GetUsername() name: string) {
     return this.authService.logOut();
   }
