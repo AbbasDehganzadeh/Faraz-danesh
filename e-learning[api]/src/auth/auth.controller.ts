@@ -1,5 +1,4 @@
 import { Reflector } from '@nestjs/core';
-import { AuthService } from './auth.service';
 import {
   Body,
   Controller,
@@ -10,18 +9,18 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { roles } from './roles.enum';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import { GetUsername } from '../common/decorators/get-username.decorator';
+import { AuthService } from './auth.service';
+import { RolesGuard } from './decorators/roles.guard';
+import { Roles } from './decorators/roles.docorator';
 import {
   LoginUserDto,
   ResponseUserDto,
   SignupStaffDto,
   SignupUserDto,
 } from './dtos/user.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from './decorators/roles.guard';
-import { Roles } from './decorators/roles.docorator';
-import { roles } from './roles.enum';
-import { GetUser } from '../common/decorators/get-user.decorator';
-import { GetUsername } from '../common/decorators/get-username.decorator';
 import { JwtGuard } from './guards/jwt.guard';
 import { GithubGuard } from './guards/github.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';

@@ -1,14 +1,14 @@
-import { AuthController } from './auth.controller';
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
-import { User } from './entities/user.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
-import { ConfigService } from '@nestjs/config';
+import { User } from './entities/user.entity';
 // import { RolesGuard } from './decorators/roles.guard';
 // import { APP_GUARD } from '@nestjs/core';
 

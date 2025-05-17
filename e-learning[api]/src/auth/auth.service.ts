@@ -1,8 +1,3 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
 import {
   createHmac,
   scryptSync,
@@ -10,19 +5,23 @@ import {
   timingSafeEqual,
 } from 'node:crypto';
 import { Buffer } from 'node:buffer';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'jsonwebtoken';
+import { plainToClass } from 'class-transformer';
+import { RedisService } from '../redisdb/redis.service';
+import { roles } from './roles.enum';
 import {
   LoginUserDto,
   ResponseUserDto,
   SignupUserDto,
   SignupStaffDto,
 } from './dtos/user.dto';
-import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from 'jsonwebtoken';
-import { plainToClass } from 'class-transformer';
-import { roles } from './roles.enum';
-import { RedisService } from '../../src/redisdb/redis.service';
+import { User } from './entities/user.entity';
 
-const KEY_SECRET = 'KEY_SECRET';
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,6 +30,8 @@ export class AuthService {
     private jwtService: JwtService,
     private redisService: RedisService,
   ) {}
+  private AUTH_SIGN_USER =
+    this.configService.getOrThrow<string>('AUTH_SIGN_USER');
   async getUserById(id: number) {
     const user = await this.users.findOneBy({ id });
     return user;
@@ -129,7 +130,7 @@ export class AuthService {
   }
 
   private encryptMessage(message: string) {
-    const cipher = createHmac('sha512', KEY_SECRET);
+    const cipher = createHmac('sha512', this.AUTH_SIGN_USER);
     cipher.update(message);
     return cipher.digest('base64');
   }
