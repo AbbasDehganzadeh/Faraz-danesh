@@ -35,8 +35,14 @@ export class CartService {
       );
     }
     const user = await this.userService.getUserById(userid);
+    if (!user) {
+      throw new HttpException(
+        `User with ID ${userid} doesn't exist!`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     const cart = this.carts.create({
-      user: user ?? {},
+      user: user,
       totalPrice: 1000, //! dummy data
     });
     await this.carts.save(cart);
