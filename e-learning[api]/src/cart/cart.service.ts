@@ -44,13 +44,13 @@ export class CartService {
     }
     const cart = this.carts.create({
       user: user,
-      totalPrice: 1000, //! dummy data
+      totalPrice: 0,
     });
     await this.carts.save(cart);
     data.items.forEach((data) => {
       this.addCart(cart, data);
     });
-    return cart;
+    return this.updateCart(cart.id);
   }
   async discountCart(id: number, data: discountCartDto) {
     if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
@@ -69,6 +69,12 @@ export class CartService {
   async destroyCart(id: number) {
     const cart = await this.carts.findBy({ id: id, status: CartStatus.Open });
     return this.carts.remove(cart);
+  }
+  async updateCart(id: number) {
+    const cart = await this.carts.findOneBy({ id: id });
+    const total = cart?.cartItems.map((c) => c.price).reduce((a, b) => a + b);
+    cart!.totalPrice = total ?? 0;
+    return this.carts.save(cart!);
   }
 
   private async getOpenCart(uid: number) {
@@ -95,7 +101,8 @@ export class CartService {
       );
     }
     const cart = await this.carts.findOneBy({ id: id });
-    return this.addCart(cart!, data);
+    await this.addCart(cart!, data);
+    return this.updateCart(id);
   }
   async removeCart(id: number, pid: number) {
     if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
@@ -105,7 +112,8 @@ export class CartService {
       );
     }
     const citem = await this.cartitems.findBy({ id: pid });
-    return this.cartitems.remove(citem);
+    await this.cartitems.remove(citem);
+    return this.updateCart(id);
   }
 
   private async addCart(cart: Cart, data: InsertCartDto) {
