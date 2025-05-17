@@ -53,7 +53,7 @@ export class CartService {
     return this.updateCart(cart.id);
   }
   async discountCart(id: number, data: discountCartDto) {
-    if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
+    if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
         HttpStatus.BAD_REQUEST,
@@ -77,24 +77,23 @@ export class CartService {
     return this.carts.save(cart!);
   }
 
-  private async getOpenCart(uid: number) {
-    const cart = await this.carts.findOne({
+  private getOpenCart(uid: number) {
+    return this.carts.findOne({
       relations: { user: true },
       where: { status: CartStatus.Open, user: { id: uid } },
     });
-    return cart;
   }
-  private IsCartExists(id: number) {
+  private isCartExists(id: number) {
     return this.carts.exists({ where: { id: id } });
   }
-  private async IsCartClosed(id: number) {
+  private isCartClosed(id: number) {
     return this.carts.exists({
       where: { id: id, status: CartStatus.Close },
     });
   }
 
   async insertCart(id: number, data: InsertCartDto) {
-    if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
+    if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
         HttpStatus.BAD_REQUEST,
@@ -105,7 +104,7 @@ export class CartService {
     return this.updateCart(id);
   }
   async removeCart(id: number, pid: number) {
-    if (!(await this.IsCartExists(id)) || (await this.IsCartClosed(id))) {
+    if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
         HttpStatus.BAD_REQUEST,
