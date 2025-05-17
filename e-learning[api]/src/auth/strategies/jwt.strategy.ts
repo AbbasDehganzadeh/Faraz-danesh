@@ -14,6 +14,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
   validate(token: JwtPayload) {
     console.log('TokenType:  %T', token);
-    return { username: token.username, role: token.role };
+    return {
+      username: token.username,
+      id: Number(token.sub),
+      role: token.role,
+    };
   }
 }

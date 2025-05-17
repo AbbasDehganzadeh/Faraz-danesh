@@ -30,7 +30,7 @@ export class AuthService {
     private configService: ConfigService,
     private jwtService: JwtService,
     private redisService: RedisService,
-  ) { }
+  ) {}
   async getUserById(id: number) {
     const user = await this.users.findOneBy({ id });
     return user;
@@ -55,25 +55,25 @@ export class AuthService {
       role: data.role,
     });
     try {
-      await this.users.save(user)
+      await this.users.save(user);
     } catch (err) {
       if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
         console.info(err.message);
         throw new HttpException(
-          "username, email, or phone must be unique!",
+          'username, email, or phone must be unique!',
           HttpStatus.BAD_REQUEST,
-        )
+        );
       }
     }
-    const tokens = this.createJwt(user.uname, user.role);
-    return tokens
+    const tokens = this.createJwt(user.id, user.uname, user.role);
+    return tokens;
   }
   async logIn(data: LoginUserDto) {
     const { username, password } = data;
     const validuser = await this.validateUser(username, password);
 
     if (validuser) {
-      const tokens = this.createJwt(username, validuser.role);
+      const tokens = this.createJwt(validuser.id, username, validuser.role);
       return tokens;
     }
   }
@@ -103,14 +103,14 @@ export class AuthService {
     return 'api-key get';
   }
   async loginGithub(username: string) {
-    const validuser = await this.getUser(username)
+    const validuser = await this.getUser(username);
     if (validuser) {
-      const tokens = this.createJwt(username, validuser.role);
+      const tokens = this.createJwt(validuser.id, username, validuser.role);
       return tokens;
     }
   }
-  refreshToken(username: string, role: number) {
-    return this.createJwt(username, role);
+  refreshToken(id: number, username: string, role: number) {
+    return this.createJwt(id, username, role);
   }
   logOut() {
     return 'user logged out';
@@ -143,8 +143,9 @@ export class AuthService {
     }
     return false;
   }
-  async createJwt(username: string, role: roles) {
+  async createJwt(id: number, username: string, role: roles) {
     const payload: JwtPayload = {
+      sub: String(id),
       username,
       role,
     };

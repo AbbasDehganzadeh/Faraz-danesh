@@ -20,6 +20,11 @@ export class JwtRefreshStrategy extends PassportStrategy(
   validate(req: Request, token: JwtPayload) {
     console.log('TokenType:  %T', token);
     const rt = req?.get('authorization')?.replace('Bearer', '').trim();
-    return { username: token.username, role: token.role, refreshToken: rt };
+    return {
+      username: token.username,
+      id: Number(token.sub),
+      role: token.role,
+      refreshToken: rt,
+    };
   }
 }

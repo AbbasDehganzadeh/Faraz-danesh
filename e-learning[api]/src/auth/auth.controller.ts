@@ -26,7 +26,7 @@ import { GetUsername } from '../common/decorators/get-username.decorator';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
@@ -79,15 +79,19 @@ export class AuthController {
       return tokens;
     }
     throw new HttpException(
-      "You are not signed in yet!",
+      'You are not signed in yet!',
       HttpStatus.UNAUTHORIZED,
-    )
+    );
   }
 
   @Post('refresh')
   @UseGuards(AuthGuard('jwt-refresh'))
-  refresh(@GetUsername() name: string, @GetUser('roke') role: number) {
-    return this.authService.refreshToken(name, role);
+  refresh(
+    @GetUsername() name: string,
+    @GetUser('id') id: number,
+    @GetUser('roke') role: number,
+  ) {
+    return this.authService.refreshToken(id, name, role);
   }
   @Delete('logout')
   @UseGuards(AuthGuard('jwt'))
