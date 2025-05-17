@@ -43,10 +43,14 @@ export class CartController {
   }
 
   @Post(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: ResponseCartDto })
   insertCart(@Param('id') id: number, @Body() item: InsertCartDto) {
     return this.cartService.insertCart(id, item);
   }
   @Delete(':id/:pid')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: ResponseCartDto })
   removeCart(@Param('id') id: number, @Param('pid') pid: number) {
     return this.cartService.removeCart(id, pid);
   }
