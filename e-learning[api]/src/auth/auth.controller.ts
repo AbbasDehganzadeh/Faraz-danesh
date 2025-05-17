@@ -1,13 +1,16 @@
 import { Reflector } from '@nestjs/core';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   HttpException,
   HttpStatus,
   Post,
+  SerializeOptions,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { roles } from './roles.enum';
 import { GetUser } from '../common/decorators/get-user.decorator';
@@ -15,12 +18,9 @@ import { GetUsername } from '../common/decorators/get-username.decorator';
 import { AuthService } from './auth.service';
 import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
-import {
-  LoginUserDto,
-  ResponseUserDto,
-  SignupStaffDto,
-  SignupUserDto,
-} from './dtos/user.dto';
+import { LoginUserDto } from './dtos/login.user.dto';
+import { SignupStaffDto, SignupUserDto } from './dtos/signup.user.dto';
+import { ResponseUserDto } from './dtos/response.user.dto';
 import { JwtGuard } from './guards/jwt.guard';
 import { GithubGuard } from './guards/github.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
@@ -30,8 +30,10 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: ResponseUserDto })
   @Get('me')
-  getUser(@GetUsername() username: string): Promise<ResponseUserDto> {
+  getUser(@GetUsername() username: string) {
     return this.authService.getMe(username);
   }
   @Post('signup')

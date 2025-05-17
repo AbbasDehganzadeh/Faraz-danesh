@@ -14,12 +14,9 @@ import { JwtPayload } from 'jsonwebtoken';
 import { plainToClass } from 'class-transformer';
 import { RedisService } from '../redisdb/redis.service';
 import { roles } from './roles.enum';
-import {
-  LoginUserDto,
-  ResponseUserDto,
-  SignupUserDto,
-  SignupStaffDto,
-} from './dtos/user.dto';
+import { LoginUserDto } from './dtos/login.user.dto';
+import { SignupStaffDto, SignupUserDto } from './dtos/signup.user.dto';
+import { ResponseUserDto } from './dtos/response.user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
