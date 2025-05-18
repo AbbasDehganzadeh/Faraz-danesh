@@ -20,7 +20,7 @@ import {
 } from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
 
-@Controller('api/cart')
+@Controller('cart')
 @UseGuards(JwtGuard)
 export class CartController {
   constructor(private cartService: CartService) {}

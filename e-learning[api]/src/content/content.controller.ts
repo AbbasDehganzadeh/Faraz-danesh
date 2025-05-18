@@ -30,7 +30,7 @@ import { CreateTutorialDto, UpdateTutorialDto } from './dto/tutorial.dto';
 import { TutorialQueryDto } from './dto/query.dto';
 import { IFileSection, ITextSection } from './intefaces/section.interface';
 
-@Controller('/api')
+@Controller()
 export class ContentController {
   constructor(
     private courseService: CourseService,

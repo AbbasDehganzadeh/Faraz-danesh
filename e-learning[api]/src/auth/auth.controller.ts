@@ -22,7 +22,7 @@ import { JwtGuard } from './guards/jwt.guard';
 import { GithubGuard } from './guards/github.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
