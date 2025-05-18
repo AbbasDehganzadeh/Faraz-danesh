@@ -12,6 +12,8 @@ import {
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiResponse,
+  ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -49,6 +51,12 @@ export class AuthController {
     }
     return tokens;
   }
+  @ApiCreatedResponse({
+    description: 'it enables user to login',
+  })
+  @ApiBadRequestResponse({
+    description: 'when username, or password is wrong!',
+  })
   @Post('login')
   logIn(@Body() body: LoginUserDto) {
     return this.authService.logIn(body);
@@ -117,9 +125,13 @@ export class AuthController {
     return this.authService.getApiKey(username);
   }
 
+  @ApiResponse({ description: 'a route for github/oath functionings' })
+  @ApiTags('github')
   @UseGuards(GithubGuard)
   @Get('github/login')
   async login_gh() {}
+  @ApiResponse({ description: 'a callback-route for github/oath functionings' })
+  @ApiTags('github')
   @Get('github/cb')
   @UseGuards(GithubGuard)
   async callbk_gh(
