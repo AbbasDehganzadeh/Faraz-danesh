@@ -14,7 +14,7 @@ import { GithubStrategy } from './strategies/github.strategy';
     PassportModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_AUTH_SECRET'),
+        secret: configService.getOrThrow<string>('JWT_AUTH_SECRET'),
       }),
       inject: [ConfigService],
     }),
