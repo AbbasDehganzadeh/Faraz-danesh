@@ -9,6 +9,11 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { roles } from '../common/enum/roles.enum';
 import { GetUser } from '../common/decorators/get-user.decorator';
@@ -26,6 +31,13 @@ import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiCreatedResponse({
+    description: 'It creates & signup user.',
+    example: { access_token: 'access_token', refresh_token: 'refresh_token' },
+  })
+  @ApiBadRequestResponse({
+    description: "when user can't be created, or signed-up!",
+  })
   @Post('signup')
   async signup(@Body() body: SignupUserDto) {
     const tokens = await this.authService.signup(body);
@@ -41,6 +53,14 @@ export class AuthController {
   logIn(@Body() body: LoginUserDto) {
     return this.authService.logIn(body);
   }
+  @ApiCreatedResponse({
+    description: 'It creates & signup teacher.',
+    example: { access_token: 'access_token', refresh_token: 'refresh_token' },
+  })
+  @ApiBadRequestResponse({
+    description: "when user can't be created, or signed-up!",
+  })
+  @ApiUnauthorizedResponse({ description: 'when sign-token is invalid!' })
   @Post('signup/tutor')
   async tutorSignup(@Body() body: SignupStaffDto) {
     const user = await this.authService.signUpStaff(body);
@@ -57,6 +77,14 @@ export class AuthController {
     }
     return tokens;
   }
+  @ApiCreatedResponse({
+    description: 'It creates & signup supervisor.',
+    example: { access_token: 'access_token', refresh_token: 'refresh_token' },
+  })
+  @ApiBadRequestResponse({
+    description: "when user can't be created, or signed-up!",
+  })
+  @ApiUnauthorizedResponse({ description: 'when sign-token is invalid!' })
   @Post('signup/visor')
   async visorSignup(@Body() body: SignupStaffDto) {
     const user = await this.authService.signUpStaff(body);
