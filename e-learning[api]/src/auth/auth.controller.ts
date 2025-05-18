@@ -1,5 +1,4 @@
 import { Reflector } from '@nestjs/core';
-import { AuthService } from './auth.service';
 import {
   Body,
   Controller,
@@ -8,16 +7,20 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
-import { LoginUserDto, SignupStaffDto, SignupUserDto } from './dtos/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from './decorators/roles.guard';
-import { Roles } from './decorators/roles.docorator';
 import { roles } from '../common/enum/roles.enum';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { GetUsername } from '../common/decorators/get-username.decorator';
+import { AuthService } from './auth.service';
+import { RolesGuard } from './decorators/roles.guard';
+import { Roles } from './decorators/roles.docorator';
+import { LoginUserDto } from './dtos/login.user.dto';
+import { SignupStaffDto, SignupUserDto } from './dtos/signup.user.dto';
+import { JwtGuard } from './guards/jwt.guard';
+import { GithubGuard } from './guards/github.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -71,28 +74,26 @@ export class AuthController {
     return tokens;
   }
   @Roles(roles.SUPERVISOR)
-  @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
+  @UseGuards(JwtGuard, new RolesGuard(new Reflector()))
   @Post('key')
-  setApiKey(@Req() req: any, @Body() body: { tutor: string }) {
-    const { user } = req;
+  setApiKey(@GetUsername() username: string, @Body() body: { tutor: string }) {
     if (!body.tutor) {
       throw new HttpException('tutor is required', HttpStatus.BAD_REQUEST);
     }
-    return this.authService.setApiKey(user.username, body.tutor);
+    return this.authService.setApiKey(username, body.tutor);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Get('key')
-  getApiKey(@Req() req: any) {
-    const { user } = req;
-    return this.authService.getApiKey(user.username);
+  getApiKey(@GetUsername() username: string) {
+    return this.authService.getApiKey(username);
   }
 
-  @UseGuards(AuthGuard('github'))
+  @UseGuards(GithubGuard)
   @Get('github/login')
   async login_gh() {}
   @Get('github/cb')
-  @UseGuards(AuthGuard('github'))
+  @UseGuards(GithubGuard)
   async callbk_gh(@GetUsername() username: string) {
     const tokens = await this.authService.loginGithub(username);
     if (tokens) {
@@ -105,12 +106,16 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(AuthGuard('jwt-refresh'))
-  refresh(@GetUsername() name: string, @GetUser('roke') role: number) {
-    return this.authService.refreshToken(name, role);
+  @UseGuards(JwtRefreshGuard)
+  refresh(
+    @GetUsername() name: string,
+    @GetUser('id') id: number,
+    @GetUser('role') role: number,
+  ) {
+    return this.authService.refreshToken(id, name, role);
   }
   @Delete('logout')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   logOut(@GetUsername() name: string) {
     return this.authService.logOut();
   }

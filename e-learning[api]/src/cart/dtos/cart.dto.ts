@@ -6,7 +6,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Expose, Transform, Type } from 'class-transformer';
-import { ResponseUserDto } from '../../user/dtos/user.dto';
+import { ResponseUserDto } from '../../user/dtos/response.user.dto';
 import { CartItemDto, InsertCartDto } from './cart-item.dto';
 
 export class CreateCartDto {

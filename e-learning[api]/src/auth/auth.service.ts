@@ -1,5 +1,3 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import {
   createHmac,
   scryptSync,
@@ -7,14 +5,16 @@ import {
   timingSafeEqual,
 } from 'node:crypto';
 import { Buffer } from 'node:buffer';
-import { LoginUserDto, SignupUserDto, SignupStaffDto } from './dtos/auth.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
-import { roles } from '../common/enum/roles.enum';
-import { RedisService } from '../redisdb/redis.service';
 import { UserService } from '../user/user.service';
+import { RedisService } from '../redisdb/redis.service';
+import { roles } from '../common/enum/roles.enum';
+import { LoginUserDto } from './dtos/login.user.dto';
+import { SignupStaffDto, SignupUserDto } from './dtos/signup.user.dto';
 
-const KEY_SECRET = 'KEY_SECRET';
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,16 +23,15 @@ export class AuthService {
     private jwtService: JwtService,
     private redisService: RedisService,
   ) {}
+  private AUTH_SIGN_USER =
+    this.configService.getOrThrow<string>('AUTH_SIGN_USER');
   async signup(data: SignupUserDto) {
     const hashedpass = this.createPassword(data.password);
     const user = await this.userService.createUser({
       ...data,
       password: hashedpass,
     });
-    if (!user) {
-      return null;
-    }
-    const tokens = this.createJwt(user.uname, user.role);
+    const tokens = this.createJwt(user.id, user.uname, user.role);
     return tokens;
   }
   async logIn(data: LoginUserDto) {
@@ -40,7 +39,7 @@ export class AuthService {
     const validuser = await this.validateUser(username, password);
 
     if (validuser) {
-      const tokens = this.createJwt(username, validuser.role);
+      const tokens = this.createJwt(validuser.id, username, validuser.role);
       return tokens;
     }
   }
@@ -81,22 +80,20 @@ export class AuthService {
   async loginGithub(username: string) {
     const validuser = await this.userService.getUser(username);
     if (validuser) {
-      const tokens = this.createJwt(username, validuser.role);
+      const tokens = this.createJwt(validuser.id, username, validuser.role);
       return tokens;
     }
   }
-  refreshToken(username: string, role: number) {
-    return this.createJwt(username, role);
+  refreshToken(id: number, username: string, role: number) {
+    return this.createJwt(id, username, role);
   }
   logOut() {
     return 'user logged out';
   }
   async validateUser(username: string, password: string) {
     const user = await this.userService.getUser(username);
-    if (user) {
-      if (this.matchPassword(password, user.password)) {
-        return user;
-      }
+    if (user && this.matchPassword(password, user.password)) {
+      return user;
     }
     throw new HttpException(
       'wrong username, or password',
@@ -104,23 +101,20 @@ export class AuthService {
     );
   }
 
-  encryptMessage(message: string) {
-    const cipher = createHmac('sha512', KEY_SECRET);
-    cipher.update(message);
-    return cipher.digest('base64');
+  private encryptMessage(message: string) {
+    const cipher = createHmac('sha512', this.AUTH_SIGN_USER);
+    return cipher.update(message).digest('base64');
   }
-  matchKeys(payload: string, token: string) {
+  private matchKeys(payload: string, token: string) {
     const key = this.encryptMessage(payload);
-    if (
+    return (
       key.length === token.length &&
       timingSafeEqual(Buffer.from(key), Buffer.from(token))
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
-  async createJwt(username: string, role: roles) {
+  async createJwt(id: number, username: string, role: roles) {
     const payload: JwtPayload = {
+      sub: String(id),
       username,
       role,
     };
@@ -139,23 +133,22 @@ export class AuthService {
       refresh_token: rt,
     };
   }
-  createPassword(password: string) {
+  private createPassword(password: string) {
     const salt = randomBytes(16).toString();
     return this.encryptPassword(password, salt);
   }
-  encryptPassword(password: string, salt: string) {
+  private encryptPassword(password: string, salt: string) {
     const hashed = scryptSync(password, salt, 64);
     return `${salt}:${hashed}`;
   }
-  matchPassword(password: string, expectpassword: string) {
+  private matchPassword(password: string, expectpassword: string) {
     const [salt, key] = expectpassword.split(':');
     const encpass = this.encryptPassword(password, salt);
     const hashedpass = Buffer.from(encpass.split(':')[1]);
     const expectedpass = Buffer.from(key);
-    if (
+    return (
       hashedpass.length === expectedpass.length &&
       timingSafeEqual(hashedpass, expectedpass)
-    )
-      return true;
+    );
   }
 }

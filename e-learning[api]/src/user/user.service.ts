@@ -3,7 +3,8 @@ import { plainToClass } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { CreateUserDto, ResponseUserDto } from './dtos/user.dto';
+import { CreateUserDto } from './dtos/user.dto';
+import { ResponseUserDto } from './dtos/response.user.dto';
 
 @Injectable()
 export class UserService {
@@ -34,8 +35,10 @@ export class UserService {
       await this.users.save(user);
     } catch (err) {
       if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
-        console.info(err.message);
-        return null;
+        throw new HttpException(
+          'username, email, or phone must be unique!',
+          HttpStatus.BAD_REQUEST,
+        );
       }
     }
     return user;
