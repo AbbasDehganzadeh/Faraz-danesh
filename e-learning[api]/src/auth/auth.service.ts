@@ -49,13 +49,9 @@ export class AuthService {
     const key = `$SUStaff:${supervisorName}:${user.username}`;
     // fetch from redis
     const message = await this.redisService.getdel(key);
-    if (!message) {
-      return null;
-    }
+    if (!message) return null;
     await this.redisService.srem(indexKey, [key]);
-    if (this.matchKeys(message, supervisorKey)) {
-      return user;
-    }
+    if (this.matchKeys(message, supervisorKey)) return user;
     return null;
   }
   async setApiKey(supervisor: string, tutor: string) {
@@ -63,19 +59,19 @@ export class AuthService {
     const key = `$SUStaff:${supervisor}:${tutor}`;
     const message = `${supervisor}:${tutor}_${Date()}`;
     const token = this.encryptMessage(message);
-    // save to Redis
+    // save redis
     await this.redisService.set(key, message);
     await this.redisService.sadd(indexKey, [key]);
-    return token;
+    return { token };
   }
-  async getApiKey(supervisor: string) {
+  async getApiKeys(supervisor: string) {
     const indexKey = `$SUStaff:${supervisor}:index`;
     const keys = await this.redisService.smembers(indexKey);
-    const tokens = [];
-    for (const key of keys) {
-      tokens.push(await this.redisService.get(key));
-    }
-    return tokens;
+    const getval = async (item: string) => {
+      return await this.redisService.get(item);
+    };
+    const tokens = await Promise.all(keys.map(getval));
+    return { tokens };
   }
   async loginGithub(username: string, email: string) {
     const [validusername, validuseremail] = await Promise.all([

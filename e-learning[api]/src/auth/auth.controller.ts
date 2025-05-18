@@ -25,6 +25,7 @@ import { RolesGuard } from './decorators/roles.guard';
 import { Roles } from './decorators/roles.docorator';
 import { LoginUserDto } from './dtos/login.user.dto';
 import { SignupStaffDto, SignupUserDto } from './dtos/signup.user.dto';
+import { SignUserDto } from './dtos/sign.user.dto';
 import { JwtGuard } from './guards/jwt.guard';
 import { GithubGuard } from './guards/github.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
@@ -120,17 +121,14 @@ export class AuthController {
   @Roles(roles.SUPERVISOR)
   @UseGuards(JwtGuard, new RolesGuard(new Reflector()))
   @Post('key')
-  setApiKey(@GetUsername() username: string, @Body() body: { tutor: string }) {
-    if (!body.tutor) {
-      throw new HttpException('tutor is required', HttpStatus.BAD_REQUEST);
-    }
+  setApiKey(@GetUsername() username: string, @Body() body: SignUserDto) {
     return this.authService.setApiKey(username, body.tutor);
   }
   @Roles(roles.SUPERVISOR)
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Get('key')
-  getApiKey(@GetUsername() username: string) {
-    return this.authService.getApiKey(username);
+  getApiKeys(@GetUsername() username: string) {
+    return this.authService.getApiKeys(username);
   }
 
   @ApiResponse({ description: 'a route for github/oath functionings' })
