@@ -77,12 +77,17 @@ export class AuthService {
     }
     return tokens;
   }
-  async loginGithub(username: string) {
-    const validuser = await this.userService.getUser(username);
-    if (validuser) {
-      const tokens = this.createJwt(validuser.id, username, validuser.role);
-      return tokens;
+  async loginGithub(username: string, email: string) {
+    const [validusername, validuseremail] = await Promise.all([
+      this.userService.getUser(username),
+      this.userService.getUserByEmail(email),
+    ]);
+    if (!validusername && !validuseremail) {
+      return null;
     }
+    const validuser = validusername ?? validuseremail;
+    const tokens = this.createJwt(validuser!.id, username, validuser!.role);
+    return tokens;
   }
   refreshToken(id: number, username: string, role: number) {
     return this.createJwt(id, username, role);

@@ -17,6 +17,10 @@ export class UserService {
     const user = await this.users.findOne({ where: { uname: username } });
     return user;
   }
+  async getUserByEmail(email: string) {
+    const user = await this.users.findOne({ where: { email: email } });
+    return user;
+  }
   async getMe(username: string) {
     const user = await this.getUser(username);
     const result = plainToClass(ResponseUserDto, user);

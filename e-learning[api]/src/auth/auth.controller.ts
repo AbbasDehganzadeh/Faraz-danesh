@@ -122,8 +122,11 @@ export class AuthController {
   async login_gh() {}
   @Get('github/cb')
   @UseGuards(GithubGuard)
-  async callbk_gh(@GetUsername() username: string) {
-    const tokens = await this.authService.loginGithub(username);
+  async callbk_gh(
+    @GetUsername() username: string,
+    @GetUser('emails') emails: string[],
+  ) {
+    const tokens = await this.authService.loginGithub(username, emails[0]);
     if (tokens) {
       return tokens;
     }
