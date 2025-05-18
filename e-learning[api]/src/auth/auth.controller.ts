@@ -53,13 +53,21 @@ export class AuthController {
   }
   @ApiCreatedResponse({
     description: 'it enables user to login',
+    example: { access_token: 'access_token', refresh_token: 'refresh_token' },
   })
   @ApiBadRequestResponse({
     description: 'when username, or password is wrong!',
   })
   @Post('login')
-  logIn(@Body() body: LoginUserDto) {
-    return this.authService.logIn(body);
+  async logIn(@Body() body: LoginUserDto) {
+    const tokens = await this.authService.logIn(body);
+    if (!tokens) {
+      throw new HttpException(
+        'wrong username, or password',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return tokens;
   }
   @ApiCreatedResponse({
     description: 'It creates & signup teacher.',

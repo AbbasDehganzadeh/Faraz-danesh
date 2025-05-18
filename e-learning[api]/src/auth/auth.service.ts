@@ -5,7 +5,7 @@ import {
   timingSafeEqual,
 } from 'node:crypto';
 import { Buffer } from 'node:buffer';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
@@ -97,13 +97,7 @@ export class AuthService {
   }
   async validateUser(username: string, password: string) {
     const user = await this.userService.getUser(username);
-    if (user && this.matchPassword(password, user.password)) {
-      return user;
-    }
-    throw new HttpException(
-      'wrong username, or password',
-      HttpStatus.BAD_REQUEST,
-    );
+    if (user && this.matchPassword(password, user.password)) return user;
   }
 
   private encryptMessage(message: string) {
