@@ -118,6 +118,11 @@ export class AuthController {
     }
     return tokens;
   }
+  @ApiCreatedResponse({
+    description: 'It builds a token to signup a new tutor/visor.',
+    example: { token: 'tolen' },
+  })
+  @ApiUnauthorizedResponse({ description: 'when given request is not valid!' })
   @Roles(roles.SUPERVISOR)
   @UseGuards(JwtGuard, new RolesGuard(new Reflector()))
   @Post('key')
@@ -125,6 +130,10 @@ export class AuthController {
     return this.authService.setApiKey(username, body.tutor);
   }
   @Roles(roles.SUPERVISOR)
+  @ApiResponse({
+    description: 'shows a set of tokens signed-by user',
+    example: { tokens: ['token'] },
+  })
   @UseGuards(AuthGuard('jwt'), new RolesGuard(new Reflector()))
   @Get('key')
   getApiKeys(@GetUsername() username: string) {
