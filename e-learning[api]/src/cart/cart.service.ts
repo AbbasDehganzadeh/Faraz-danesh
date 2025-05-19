@@ -56,7 +56,7 @@ export class CartService {
     if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
     const cart = await this.carts.findOneBy({ id: id });
@@ -67,8 +67,15 @@ export class CartService {
     return `Cart ${id}:${data.discountCode} Off!!!`;
   }
   async destroyCart(id: number) {
-    const cart = await this.carts.findBy({ id: id, status: CartStatus.Open });
-    return this.carts.remove(cart);
+    const cart = await this.carts.findOneBy({
+      id: id,
+      status: CartStatus.Open,
+    });
+    if (cart) return this.carts.remove(cart);
+    throw new HttpException(
+      `Cart with ID ${id} doesen't exist, or closed!`,
+      HttpStatus.NOT_FOUND,
+    );
   }
   async updateCart(id: number) {
     const cart = await this.carts.findOneBy({ id: id });
@@ -96,7 +103,7 @@ export class CartService {
     if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
     const cart = await this.carts.findOneBy({ id: id });
@@ -107,7 +114,7 @@ export class CartService {
     if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
     const citem = await this.cartitems.findBy({ id: pid });
