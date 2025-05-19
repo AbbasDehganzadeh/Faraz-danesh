@@ -11,6 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
@@ -51,6 +52,9 @@ export class CartController {
   @ApiCreatedResponse({
     description: 'a route for creating a new cart',
     type: ResponseCartDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'item with specified _id already exists!',
   })
   @ApiNotFoundResponse({
     description: 'content with specified _id not found!',

@@ -120,6 +120,12 @@ export class CartService {
   }
 
   private async addCart(cart: Cart, data: InsertCartDto) {
+    if (await this.cartitems.findBy({ pid: data.pid })) {
+      throw new HttpException(
+        `Course, or tutorial with this ${data.pid} already exists!`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const content = await this.findContent(data.pid);
     if (!content) {
       throw new HttpException(
