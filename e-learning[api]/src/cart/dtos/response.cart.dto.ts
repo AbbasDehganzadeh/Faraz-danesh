@@ -1,12 +1,32 @@
+import { IsEnum } from 'class-validator';
 import { Transform, Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { ResponseUserDto } from '../../user/dtos/response.user.dto';
 import { CartItemDto } from './cart-item.dto';
+import { CartStatus } from 'src/common/enum/cart-status.enum';
 
 export class ResponseCartDto {
   @ApiProperty({ title: 'id', description: 'ID of cart', example: 1 })
   id: number;
 
+  @ApiProperty({
+    title: 'status',
+    description: 'status of cart',
+    example: CartStatus.Open,
+    enum: CartStatus,
+  })
+  @IsEnum(CartStatus)
+  @Transform(({ value }) => {
+    switch (value) {
+      case CartStatus.Open:
+        return 'Open';
+      case CartStatus.Pending:
+        return 'Pending';
+      default:
+        return 'Close';
+    }
+  })
+  status: CartStatus;
   @ApiProperty({
     title: 'discount',
     description: 'discount in percentage `n%`',
