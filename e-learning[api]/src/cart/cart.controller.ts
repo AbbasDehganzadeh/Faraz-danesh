@@ -10,6 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiCreatedResponse, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { CartOwnerGuard } from '../payment/guards/cartOwner.guard';
 import { CartService } from './cart.service';
@@ -25,6 +26,11 @@ import { InsertCartDto } from './dtos/cart-item.dto';
 export class CartController {
   constructor(private cartService: CartService) {}
 
+  @ApiBearerAuth()
+  @ApiCreatedResponse({
+    description: 'a route for recieving cart info',
+    type: ResponseCartDto,
+  })
   @Get(':id')
   @UseGuards(CartOwnerGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -32,23 +38,30 @@ export class CartController {
   recieveCart(@Param('id') id: number) {
     return this.cartService.getCart(id);
   }
+
+  @ApiBearerAuth()
   @Post('')
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: ResponseCartDto })
   createCart(@Body() cart: CreateCartDto) {
     return this.cartService.createCart(cart);
   }
+
+  @ApiBearerAuth()
   @Post(':id/discount')
   @UseGuards(CartOwnerGuard)
   discountCart(@Param('id') id: number, @Body() Code: discountCartDto) {
     return this.cartService.discountCart(id, Code);
   }
+
+  @ApiBearerAuth()
   @Delete(':id')
   @UseGuards(CartOwnerGuard)
   destroyCart(@Param('id') id: number) {
     return this.cartService.destroyCart(id);
   }
 
+  @ApiBearerAuth()
   @Post(':id')
   @UseGuards(CartOwnerGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -56,6 +69,8 @@ export class CartController {
   insertCart(@Param('id') id: number, @Body() item: InsertCartDto) {
     return this.cartService.insertCart(id, item);
   }
+
+  @ApiBearerAuth()
   @Delete(':id/:pid')
   @UseGuards(CartOwnerGuard)
   @UseInterceptors(ClassSerializerInterceptor)
