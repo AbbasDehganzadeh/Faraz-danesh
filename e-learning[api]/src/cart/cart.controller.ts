@@ -27,6 +27,7 @@ import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
 import { ResponseCartDto } from './dtos/response.cart.dto';
 
+@ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'user must be logged-in with specified privallages!',
 })
@@ -35,7 +36,6 @@ import { ResponseCartDto } from './dtos/response.cart.dto';
 export class CartController {
   constructor(private cartService: CartService) {}
 
-  @ApiBearerAuth()
   @ApiCreatedResponse({
     description: 'a route for recieving cart info',
     type: ResponseCartDto,
@@ -48,7 +48,6 @@ export class CartController {
     return this.cartService.getCart(id);
   }
 
-  @ApiBearerAuth()
   @ApiCreatedResponse({
     description: 'a route for creating a new cart',
     type: ResponseCartDto,
@@ -69,14 +68,12 @@ export class CartController {
     return this.cartService.createCart(username, cart);
   }
 
-  @ApiBearerAuth()
   @Post(':id/discount')
   @UseGuards(CartOwnerGuard)
   discountCart(@Param('id') id: number, @Body() Code: discountCartDto) {
     return this.cartService.discountCart(id, Code);
   }
 
-  @ApiBearerAuth()
   @ApiNoContentResponse({
     description: 'a route for delieting a cart',
   })
@@ -89,7 +86,6 @@ export class CartController {
     return this.cartService.destroyCart(id);
   }
 
-  @ApiBearerAuth()
   @ApiCreatedResponse({
     description: 'a route for inserting a new item to cart',
     type: ResponseCartDto,
@@ -111,7 +107,6 @@ export class CartController {
     return this.cartService.insertCart(id, item);
   }
 
-  @ApiBearerAuth()
   @ApiNoContentResponse({
     description: 'a route for removing an item from cart',
   })
