@@ -11,9 +11,14 @@ import { CartItemDto, InsertCartDto } from './cart-item.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCartDto {
+  @ApiProperty({ title: 'userid', description: 'ID of user cart', example: 1 })
   @IsNumber()
   userId: number;
-
+  @ApiProperty({
+    title: 'cart items',
+    description: 'items in cart',
+    type: () => [InsertCartDto],
+  })
   @Type(() => InsertCartDto)
   @IsArray()
   @IsNotEmpty({ each: true })
@@ -101,7 +106,7 @@ export class ResponseCartDto {
   @ApiProperty({
     title: 'cart items',
     description: 'items in cart',
-    type: () => CartItemDto,
+    type: () => [CartItemDto],
   })
   @Expose({ name: 'cart_items' })
   @Transform(({ obj }) => obj['cartItems'])
