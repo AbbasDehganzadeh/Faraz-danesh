@@ -81,7 +81,7 @@ export class CartController {
     description: 'a route for delieting a cart',
   })
   @ApiNotFoundResponse({
-    description: 'content with specified _id not found!',
+    description: 'inappropriate cart functioning!',
   })
   @Delete(':id')
   @UseGuards(CartOwnerGuard)
@@ -100,6 +100,9 @@ export class CartController {
   @ApiNotFoundResponse({
     description: 'content with specified _id not found!',
   })
+  @ApiNotFoundResponse({
+    description: 'inappropriate cart functioning!',
+  })
   @Post(':id')
   @UseGuards(CartOwnerGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -111,6 +114,9 @@ export class CartController {
   @ApiBearerAuth()
   @ApiNoContentResponse({
     description: 'a route for removing an item from cart',
+  })
+  @ApiNotFoundResponse({
+    description: 'inappropriate cart functioning!',
   })
   @Delete(':id/:pid')
   @UseGuards(CartOwnerGuard)
