@@ -90,6 +90,16 @@ export class CartController {
   }
 
   @ApiBearerAuth()
+  @ApiCreatedResponse({
+    description: 'a route for inserting a new item to cart',
+    type: ResponseCartDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'item with specified _id already exists!',
+  })
+  @ApiNotFoundResponse({
+    description: 'content with specified _id not found!',
+  })
   @Post(':id')
   @UseGuards(CartOwnerGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -99,6 +109,9 @@ export class CartController {
   }
 
   @ApiBearerAuth()
+  @ApiNoContentResponse({
+    description: 'a route for removing an item from cart',
+  })
   @Delete(':id/:pid')
   @UseGuards(CartOwnerGuard)
   @UseInterceptors(ClassSerializerInterceptor)
