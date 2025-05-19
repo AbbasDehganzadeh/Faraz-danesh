@@ -10,7 +10,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { CartOwnerGuard } from '../payment/guards/cartOwner.guard';
 import { CartService } from './cart.service';
@@ -20,9 +28,10 @@ import {
   ResponseCartDto,
 } from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
+import { GetUsername } from 'src/common/decorators/get-username.decorator';
 
 @ApiUnauthorizedResponse({
-  description: "user must be logged-in with specified privallages!",
+  description: 'user must be logged-in with specified privallages!',
 })
 @Controller('cart')
 @UseGuards(JwtGuard)
@@ -48,9 +57,6 @@ export class CartController {
     type: ResponseCartDto,
   })
   @ApiNotFoundResponse({
-    description: 'user with corresponding id not found!',
-  })
-  @ApiNotFoundResponse({
     description: 'content with specified _id not found!',
   })
   @ApiConflictResponse({
@@ -59,8 +65,8 @@ export class CartController {
   @Post('')
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: ResponseCartDto })
-  createCart(@Body() cart: CreateCartDto) {
-    return this.cartService.createCart(cart);
+  createCart(@GetUsername() username: string, @Body() cart: CreateCartDto) {
+    return this.cartService.createCart(username, cart);
   }
 
   @ApiBearerAuth()
@@ -73,6 +79,9 @@ export class CartController {
   @ApiBearerAuth()
   @ApiNoContentResponse({
     description: 'a route for delieting a cart',
+  })
+  @ApiNotFoundResponse({
+    description: 'content with specified _id not found!',
   })
   @Delete(':id')
   @UseGuards(CartOwnerGuard)

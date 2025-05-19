@@ -27,25 +27,22 @@ export class CartService {
       relations: { cartItems: true, user: true },
     });
   }
-  async createCart(data: CreateCartDto) {
-    const userid = data.userId;
-    if (await this.getOpenCart(userid)) {
-      throw new HttpException(
-        `User has an open cart with ID ${userid}!`,
-        HttpStatus.CONFLICT,
-      );
-    }
-    const user = await this.userService.getUserById(userid);
+  async createCart(username: string, data: CreateCartDto) {
+    const user = await this.userService.getUser(username);
     if (!user) {
+      //! rare case scenarios!
       throw new HttpException(
-        `User with ID ${userid} doesn't exist!`,
+        `User with name ${username} doesn't exist!`,
         HttpStatus.NOT_FOUND,
       );
     }
-    const cart = this.carts.create({
-      user: user,
-      totalPrice: 0,
-    });
+    if (await this.getOpenCart(user.id)) {
+      throw new HttpException(
+        `User has an open cart with ID ${user.id}!`,
+        HttpStatus.CONFLICT,
+      );
+    }
+    const cart = this.carts.create({ user: user, totalPrice: 0 });
     await this.carts.save(cart);
     data.items.forEach((data) => {
       this.addCart(cart, data);

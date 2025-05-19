@@ -2,6 +2,7 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   Matches,
   ValidateNested,
 } from 'class-validator';
@@ -11,9 +12,6 @@ import { CartItemDto, InsertCartDto } from './cart-item.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCartDto {
-  @ApiProperty({ title: 'userid', description: 'ID of user cart', example: 1 })
-  @IsNumber()
-  userId: number;
   @ApiProperty({
     title: 'cart items',
     description: 'items in cart',
@@ -23,6 +21,7 @@ export class CreateCartDto {
   @IsArray()
   @IsNotEmpty({ each: true })
   @ValidateNested({ each: true })
+  @IsOptional()
   items: InsertCartDto[];
 }
 
