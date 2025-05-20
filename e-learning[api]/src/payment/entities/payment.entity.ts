@@ -24,10 +24,10 @@ export class Payment {
   @Column({ name: 'stat', enum: paymentStatus, default: paymentStatus.P })
   status: paymentStatus;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   error: string;
 
-  @Column()
+  @Column({ default: 0 })
   retry: number;
 
   @Column()
