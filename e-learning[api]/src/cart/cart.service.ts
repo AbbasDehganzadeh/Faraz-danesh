@@ -84,11 +84,15 @@ export class CartService {
     return this.carts.save(cart!);
   }
 
-  private getOpenCart(uid: number) {
+  getOpenCart(uid: number) {
     return this.carts.findOne({
       relations: { user: true },
       where: { status: CartStatus.Open, user: { id: uid } },
     });
+  }
+  changeStatus(cart: Cart, status: CartStatus) {
+    cart.status = status;
+    return this.carts.save(cart);
   }
   private isCartExists(id: number) {
     return this.carts.exists({ where: { id: id } });
