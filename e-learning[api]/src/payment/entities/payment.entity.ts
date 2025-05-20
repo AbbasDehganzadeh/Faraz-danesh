@@ -15,10 +15,10 @@ export class Payment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'pid', unique: true })
+  @Column({ name: 'pid', unique: true, nullable: true })
   paymentId: string;
 
-  @Column({ name: 'refcode' })
+  @Column({ name: 'refcode', nullable: true })
   referCode: string;
 
   @Column({ name: 'stat', enum: paymentStatus, default: paymentStatus.P })
@@ -39,7 +39,7 @@ export class Payment {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   transactionDate: Date;
 
   @OneToOne(() => Cart, (cart) => cart.payment)
