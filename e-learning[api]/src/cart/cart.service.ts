@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { CourseService } from '../content/course.service';
 import { TutorialService } from '../content/tuturial.service';
@@ -50,7 +50,10 @@ export class CartService {
     return this.updateCart(cart.id);
   }
   async discountCart(id: number, data: discountCartDto) {
-    if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
+    if (
+      !(await this.isCartExists(id)) ||
+      (await this.isCartClosedOrPending(id))
+    ) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
         HttpStatus.NOT_FOUND,
@@ -90,14 +93,18 @@ export class CartService {
   private isCartExists(id: number) {
     return this.carts.exists({ where: { id: id } });
   }
-  private isCartClosed(id: number) {
+  //? not allow manipulation after checkout!
+  private isCartClosedOrPending(id: number) {
     return this.carts.exists({
-      where: { id: id, status: CartStatus.Close },
+      where: { id: id, status: In([CartStatus.Close, CartStatus.Pending]) },
     });
   }
 
   async insertCart(id: number, data: InsertCartDto) {
-    if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
+    if (
+      !(await this.isCartExists(id)) ||
+      (await this.isCartClosedOrPending(id))
+    ) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
         HttpStatus.NOT_FOUND,
@@ -108,7 +115,10 @@ export class CartService {
     return this.updateCart(id);
   }
   async removeCart(id: number, pid: number) {
-    if (!(await this.isCartExists(id)) || (await this.isCartClosed(id))) {
+    if (
+      !(await this.isCartExists(id)) ||
+      (await this.isCartClosedOrPending(id))
+    ) {
       throw new HttpException(
         `Cart with ID ${id} doesen't exist, or closed!`,
         HttpStatus.NOT_FOUND,
