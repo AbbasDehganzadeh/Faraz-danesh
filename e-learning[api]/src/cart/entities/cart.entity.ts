@@ -40,9 +40,6 @@ export class Cart {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToOne(() => Payment, (payment) => payment.cart)
-  payment: Payment;
-
   @ManyToOne(() => User, (user) => user.carts)
   user: User;
 

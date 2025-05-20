@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -42,7 +43,8 @@ export class Payment {
   @Column({ nullable: true })
   transactionDate: Date;
 
-  @OneToOne(() => Cart, (cart) => cart.payment)
+  @JoinColumn()
+  @OneToOne(() => Cart, (cart) => cart)
   cart: Cart;
 
   @ManyToOne(() => User, (user) => user.payments)
