@@ -20,8 +20,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/guards/jwt.guard';
+import { CartOwnerGuard } from './guards/cartOwner.guard';
 import { GetUsername } from '../common/decorators/get-username.decorator';
-import { CartOwnerGuard } from '../payment/guards/cartOwner.guard';
 import { CartService } from './cart.service';
 import { CreateCartDto, discountCartDto } from './dtos/cart.dto';
 import { InsertCartDto } from './dtos/cart-item.dto';
