@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 import { CartService } from '../cart/cart.service';
 import { UserService } from '../user/user.service';
 import { CartStatus } from '../common/enum/cart-status.enum';
@@ -33,8 +33,22 @@ export class PaymentService {
     return this.payments.save(payment);
   }
 
-  getPayment(id: number) {
-    return `Payment ${id}!`;
+  async getPayment(id: number) {
+    try {
+      const payment = await this.payments.findOneOrFail({
+        where: { id: id },
+        relations: { user: true, cart: true },
+      });
+      return payment;
+    } catch (err) {
+      console.info({ err });
+      if (err instanceof EntityNotFoundError) {
+        throw new HttpException(
+          `Payment with id ${id} doesn't exist`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
   }
 
   purchasePayment(id: number) {
