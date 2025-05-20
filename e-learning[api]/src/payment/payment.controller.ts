@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
+import { GetUser } from '../common/decorators/get-user.decorator';
 import { PaymentService } from './payment.service';
 
 @Controller('payment')
@@ -6,8 +7,8 @@ export class PaymentController {
   constructor(private paymentService: PaymentService) {}
 
   @Post()
-  makePayment() {
-    return this.paymentService.makePayment();
+  makePayment(@GetUser('id') userId: number) {
+    return this.paymentService.makePayment(userId);
   }
 
   @Get(':id')
