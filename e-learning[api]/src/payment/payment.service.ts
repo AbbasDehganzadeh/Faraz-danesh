@@ -5,6 +5,7 @@ import { CartService } from '../cart/cart.service';
 import { UserService } from '../user/user.service';
 import { CartStatus } from '../common/enum/cart-status.enum';
 import { Payment } from './entities/payment.entity';
+import { paymentStatus } from 'src/common/enum/payment-status.enum';
 
 @Injectable()
 export class PaymentService {
@@ -51,15 +52,35 @@ export class PaymentService {
     }
   }
 
-  purchasePayment(id: number) {
-    return `Payment ${id} purchased!`;
+  async purchasePayment(id: number) {
+    const payment = await this.getPayment(id);
+    if (!this.isPaymentAvailable(payment!)) {
+      throw new HttpException(
+        `Payment isn't available for proccessing:\
+        \tMaybe it is in the stage of 'Proccessing', or 'refund'!`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  discountPayment(id: number) {
-    return `Payment ${id} Off!!`;
+  async discountPayment(id: number) {
+    const payment = await this.getPayment(id);
+    if (!this.isPaymentAvailable(payment!)) {
+      throw new HttpException(
+        `Payment isn't available for proccessing:\
+        \tMaybe it is in the stage of 'Proccessing', or 'refund'!`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   recievePayment(id: number) {
     return `Payment ${id} recieved!`;
+  }
+
+  private isPaymentAvailable(payment: Payment) {
+    return [paymentStatus.P, paymentStatus.C, paymentStatus.F].includes(
+      payment.status,
+    );
   }
 }
