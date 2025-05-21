@@ -6,8 +6,9 @@ import { EntityNotFoundError, Repository } from 'typeorm';
 import { CartService } from '../cart/cart.service';
 import { UserService } from '../user/user.service';
 import { CartStatus } from '../common/enum/cart-status.enum';
+import { paymentStatus } from '../common/enum/payment-status.enum';
 import { Payment } from './entities/payment.entity';
-import { paymentStatus } from 'src/common/enum/payment-status.enum';
+import { IRequestPayment } from './interfaces/request-payment.interface';
 
 @Injectable()
 export class PaymentService {
@@ -65,17 +66,19 @@ export class PaymentService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const data: IRequestPayment = {
+      merchant_id: this.configService.getOrThrow('MERCHENT_ID'),
+      callback_url: `http://localhost:3024/api/payment/${payment?.id}/recieve`,
+      description: 'A transaction for e-learnign test-app',
+      amount: payment?.price ?? 0,
+      metadata: {
+        id: payment?.id!,
+        email: !payment?.user.email ? '' : payment?.user.email,
+        mobile: !payment?.user.phone ? '' : payment?.user.phone,
+      },
+    };
     this.httpService
-      .post('https://sandbox.zarinpal.com/pg/v4/payment/request.json', {
-        merchant_id: this.configService.getOrThrow('MERCHENT_ID'),
-        callback_url: `http://localhost:3024/api/payment/${payment?.id}/recieve`,
-        description: 'A transaction for e-learnign test-app',
-        amount: payment?.price,
-        metadata: {
-          id: payment?.id,
-          //TODO email & mobile of user.
-        },
-      })
+      .post('https://sandbox.zarinpal.com/pg/v4/payment/request.json', data)
       .subscribe((resp) => {
         const { data } = resp.data;
         const { authority, message } = data;
