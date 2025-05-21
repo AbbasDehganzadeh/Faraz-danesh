@@ -109,17 +109,17 @@ export class PaymentService {
     }
   }
 
-  async recievePayment(id: number, authority: string, status: string) {
-    const payment = await this.getPayment(id);
+  async recievePayment(authority: string, status: string) {
+    const payment = await this.getPaymentByAuthority(authority);
     if (status !== 'OK') {
       // payment failed due to some errors
       //TODO: implement failure scenario
-      await this.changePaymentStatus(payment!, paymentStatus.F);
+      await this.changePaymentStatus(payment, paymentStatus.F);
     }
     this.httpService
       .post('https://sandbox.zarinpal.com/pg/v4/payment/verify.json', {
         merchant_id: this.configService.getOrThrow('MERCHENT_ID'),
-        amount: payment?.price,
+        amount: payment.price,
         authority: authority,
       })
       .subscribe(
@@ -127,16 +127,18 @@ export class PaymentService {
         async (resp) => {
           const { data } = resp;
           const { ref_id } = data;
-          await this.payments.update(payment!, {
-            transactionDate: new Date(),
-            referCode: String(ref_id),
-            status: paymentStatus.S,
-          });
+          payment.referCode = String(ref_id);
+          payment.transactionDate = new Date();
+          await this.changePaymentStatus(payment, paymentStatus.S);
         },
       );
     return payment;
   }
 
+  private async getPaymentByAuthority(authority: string) {
+    const payment = await this.payments.findOneBy({ paymentId: authority });
+    return payment!;
+  }
   private isPaymentAvailable(payment: Payment) {
     return [paymentStatus.P, paymentStatus.C, paymentStatus.F].includes(
       payment.status,

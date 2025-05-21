@@ -50,12 +50,11 @@ export class PaymentController {
     return this.paymentService.discountPayment(id);
   }
 
-  @Get(':id/recieve')
+  @Get('recieve')
   recievePayment(
-    @Param('id') id: number,
     @Query('authority') authority: string,
     @Query('status') status: string,
   ) {
-    return this.paymentService.recievePayment(id, authority, status);
+    return this.paymentService.recievePayment(authority, status);
   }
 }
