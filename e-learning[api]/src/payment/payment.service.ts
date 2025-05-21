@@ -128,4 +128,8 @@ export class PaymentService {
       payment.status,
     );
   }
+
+  private changePaymentStatus(payment: Payment, status: paymentStatus) {
+    return this.payments.update(payment, { status: status });
+  }
 }
