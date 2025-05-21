@@ -12,6 +12,8 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { PaymentService } from './payment.service';
+import { PaymentOwnerGuard } from './guards/paymentOwner.guard';
+import { PaymentOwnerOrStaffGuard } from './guards/paymentOwnerOrStaff.guard';
 import { ResponsePaymentDto } from './dtos/response-payment.dto';
 
 @ApiBearerAuth()
@@ -28,6 +30,7 @@ export class PaymentController {
   }
 
   @Get(':id')
+  @UseGuards(PaymentOwnerOrStaffGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: ResponsePaymentDto })
   getPayment(@Param('id') id: number) {
@@ -35,11 +38,13 @@ export class PaymentController {
   }
 
   @Post(':id/purchase')
+  @UseGuards(PaymentOwnerGuard)
   purchasePayment(@Param('id') id: number) {
     return this.paymentService.purchasePayment(id);
   }
 
   @Post(':id/discount')
+  @UseGuards(PaymentOwnerGuard)
   discountPayment(@Param('id') id: number) {
     return this.paymentService.discountPayment(id);
   }
