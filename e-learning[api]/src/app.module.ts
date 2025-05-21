@@ -2,6 +2,7 @@ import * as morgan from 'morgan';
 import * as cors from 'cors';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
@@ -20,6 +21,7 @@ import { Payment } from './payment/entities/payment.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    HttpModule.register({ global: true, timeout: 10 * 1000, maxRedirects: 10 }),
     TypeOrmModule.forRootAsync({
       useFactory: (configservice: ConfigService) => {
         switch (process.env.environment) {

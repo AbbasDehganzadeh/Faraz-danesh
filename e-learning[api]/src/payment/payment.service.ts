@@ -6,11 +6,14 @@ import { UserService } from '../user/user.service';
 import { CartStatus } from '../common/enum/cart-status.enum';
 import { Payment } from './entities/payment.entity';
 import { paymentStatus } from 'src/common/enum/payment-status.enum';
+import { HttpService } from '@nestjs/axios';
+import { tap } from 'rxjs';
 
 @Injectable()
 export class PaymentService {
   constructor(
     @InjectRepository(Payment) private payments: Repository<Payment>,
+    private httpService: HttpService,
     private cartService: CartService,
     private userService: UserService,
   ) {}
