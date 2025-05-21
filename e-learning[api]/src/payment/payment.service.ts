@@ -68,7 +68,7 @@ export class PaymentService {
     }
     const data: IRequestPayment = {
       merchant_id: this.configService.getOrThrow('MERCHENT_ID'),
-      callback_url: `http://localhost:3024/api/payment/${payment?.id}/recieve`,
+      callback_url: `http://localhost:3024/api/payment/recieve`,
       description: 'A transaction for e-learnign test-app',
       amount: payment?.price ?? 0,
       metadata: {
@@ -79,7 +79,7 @@ export class PaymentService {
     };
     this.httpService
       .post('https://sandbox.zarinpal.com/pg/v4/payment/request.json', data)
-      .subscribe((resp) => {
+      .subscribe(async (resp) => {
         const { data } = resp.data;
         const { authority, message } = data;
         if (message !== 'Success') {
@@ -91,7 +91,10 @@ export class PaymentService {
         this.httpService.get(
           `https://sandbox.zarinpal.com/pg/StartPay/${authority}`,
         );
-        //TODO: change payment.status to 'Proccessing'
+        await this.payments.update(payment!, {
+          paymentId: authority,
+          status: paymentStatus.Q,
+        });
       });
   }
 
@@ -107,12 +110,12 @@ export class PaymentService {
   }
 
   async recievePayment(id: number, authority: string, status: string) {
+    const payment = await this.getPayment(id);
     if (status !== 'OK') {
       // payment failed due to some errors
       //TODO: implement failure scenario
-      return { status, authority };
+      await this.changePaymentStatus(payment!, paymentStatus.F);
     }
-    const payment = await this.getPayment(id);
     this.httpService
       .post('https://sandbox.zarinpal.com/pg/v4/payment/verify.json', {
         merchant_id: this.configService.getOrThrow('MERCHENT_ID'),
@@ -121,9 +124,17 @@ export class PaymentService {
       })
       .subscribe(
         // checking for payment status!
-        //TODO check it & save it to database!
-        (resp) => console.info(resp.data),
+        async (resp) => {
+          const { data } = resp;
+          const { ref_id } = data;
+          await this.payments.update(payment!, {
+            transactionDate: new Date(),
+            referCode: String(ref_id),
+            status: paymentStatus.S,
+          });
+        },
       );
+    return payment;
   }
 
   private isPaymentAvailable(payment: Payment) {
@@ -133,6 +144,7 @@ export class PaymentService {
   }
 
   private changePaymentStatus(payment: Payment, status: paymentStatus) {
-    return this.payments.update(payment, { status: status });
+    payment.status = status;
+    return this.payments.save(payment);
   }
 }
