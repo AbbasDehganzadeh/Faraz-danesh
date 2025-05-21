@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   SerializeOptions,
   UseGuards,
   UseInterceptors,
@@ -37,7 +38,7 @@ export class PaymentController {
     return this.paymentService.getPayment(id);
   }
 
-  @Post(':id/purchase')
+  @Get(':id/purchase')
   @UseGuards(PaymentOwnerGuard)
   purchasePayment(@Param('id') id: number) {
     return this.paymentService.purchasePayment(id);
@@ -50,7 +51,11 @@ export class PaymentController {
   }
 
   @Get(':id/recieve')
-  recievePayment(@Param('id') id: number) {
-    return this.paymentService.recievePayment(id);
+  recievePayment(
+    @Param('id') id: number,
+    @Query('authority') authority: string,
+    @Query('status') status: string,
+  ) {
+    return this.paymentService.recievePayment(id, authority, status);
   }
 }
