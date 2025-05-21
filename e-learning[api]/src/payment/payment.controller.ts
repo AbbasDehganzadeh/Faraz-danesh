@@ -1,8 +1,10 @@
 import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { GetUser } from '../common/decorators/get-user.decorator';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 import { PaymentService } from './payment.service';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
+@ApiBearerAuth()
 @Controller('payment')
 @UseGuards(JwtGuard)
 export class PaymentController {
