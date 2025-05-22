@@ -32,7 +32,6 @@ export class ResponseCartDto {
     description: 'discount in percentage `n%`',
     example: 25,
   })
-  @Transform(({ value }) => value / 100)
   discount: number;
   @ApiProperty({
     name: 'discount-code',
