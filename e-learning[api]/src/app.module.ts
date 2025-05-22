@@ -21,7 +21,7 @@ import { Payment } from './payment/entities/payment.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    HttpModule.register({ global: true, timeout: 10, maxRedirects: 10 }),
+    HttpModule.register({ global: true, timeout: 10 * 1000, maxRedirects: 10 }),
     TypeOrmModule.forRootAsync({
       useFactory: (configservice: ConfigService) => {
         switch (process.env.environment) {
