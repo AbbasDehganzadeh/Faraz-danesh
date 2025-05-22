@@ -98,7 +98,7 @@ export class PaymentService {
       });
   }
 
-  async discountPayment(id: number) {
+  async getDiscountPayment(id: number, code: string) {
     const payment = await this.getPayment(id);
     if (!this.isPaymentAvailable(payment!)) {
       throw new HttpException(
@@ -107,6 +107,14 @@ export class PaymentService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const newpayment = await this.discountPayment(payment!, code);
+    return {
+      id: payment?.id,
+      discountCode: newpayment?.cart.discountCode,
+      discount: newpayment?.cart.discount,
+      price: newpayment?.price,
+      finalPrice: newpayment?.finalPrice,
+    };
   }
 
   async recievePayment(authority: string, status: string) {
@@ -143,6 +151,17 @@ export class PaymentService {
     return [paymentStatus.P, paymentStatus.C, paymentStatus.F].includes(
       payment.status,
     );
+  }
+
+  private async discountPayment(payment: Payment, code: string) {
+    //! hard-code sample for testing
+    if (code === '1a-a1') {
+      await this.cartService.discountCart(payment?.cart.id, code, 50);
+    }
+    const newpayment = await this.getPayment(payment.id);
+    if (newpayment?.finalPrice)
+      newpayment.finalPrice = newpayment?.cart?.finalPrice;
+    return this.payments.save(newpayment!);
   }
 
   private changePaymentStatus(payment: Payment, status: paymentStatus) {

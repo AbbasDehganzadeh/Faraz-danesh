@@ -9,7 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { PaymentService } from './payment.service';
@@ -30,6 +30,10 @@ export class PaymentController {
     return this.paymentService.makePayment(userId);
   }
 
+  @ApiOkResponse({
+    description: 'a route for getting payment detail',
+    type: ResponsePaymentDto,
+  })
   @Get(':id')
   @UseGuards(PaymentOwnerOrStaffGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -44,10 +48,10 @@ export class PaymentController {
     return this.paymentService.purchasePayment(id);
   }
 
-  @Post(':id/discount')
+  @Get(':id/discount')
   @UseGuards(PaymentOwnerGuard)
-  discountPayment(@Param('id') id: number) {
-    return this.paymentService.discountPayment(id);
+  discountPayment(@Param('id') id: number, @Query('code') code: string) {
+    return this.paymentService.getDiscountPayment(id, code);
   }
 
   @Get('recieve')
