@@ -68,12 +68,6 @@ export class CartController {
     return this.cartService.createCart(username, cart);
   }
 
-  @Post(':id/discount')
-  @UseGuards(CartOwnerGuard)
-  discountCart(@Param('id') id: number, @Body() Code: discountCartDto) {
-    return this.cartService.discountCart(id, Code);
-  }
-
   @ApiNoContentResponse({
     description: 'a route for delieting a cart',
   })

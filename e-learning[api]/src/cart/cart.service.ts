@@ -49,23 +49,6 @@ export class CartService {
     });
     return this.updateCart(cart.id);
   }
-  async discountCart(id: number, data: discountCartDto) {
-    if (
-      !(await this.isCartExists(id)) ||
-      (await this.isCartClosedOrPending(id))
-    ) {
-      throw new HttpException(
-        `Cart with ID ${id} doesen't exist, or closed!`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    const cart = await this.carts.findOneBy({ id: id });
-    if (cart?.discount) {
-      cart.discount += 5;
-      this.carts.save(cart);
-    }
-    return `Cart ${id}:${data.discountCode} Off!!!`;
-  }
   async destroyCart(id: number) {
     const cart = await this.carts.findOneBy({
       id: id,
@@ -94,6 +77,13 @@ export class CartService {
     cart.status = status;
     return this.carts.save(cart);
   }
+  async discountCart(id: number, code: string, amount: number) {
+    const cart = await this.getCart(id);
+    cart!.discountCode = code ?? undefined;
+    cart!.discount = amount ?? 0;
+    return this.carts.save(cart!);
+  }
+
   private isCartExists(id: number) {
     return this.carts.exists({ where: { id: id } });
   }
