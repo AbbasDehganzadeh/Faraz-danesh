@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -15,19 +16,19 @@ export class Payment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'pid', unique: true })
+  @Column({ name: 'pid', unique: true, nullable: true })
   paymentId: string;
 
-  @Column({ name: 'refcode' })
+  @Column({ name: 'refcode', nullable: true })
   referCode: string;
 
   @Column({ name: 'stat', enum: paymentStatus, default: paymentStatus.P })
   status: paymentStatus;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   error: string;
 
-  @Column()
+  @Column({ default: 0 })
   retry: number;
 
   @Column()
@@ -39,10 +40,11 @@ export class Payment {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   transactionDate: Date;
 
-  @OneToOne(() => Cart, (cart) => cart.payment)
+  @JoinColumn()
+  @OneToOne(() => Cart, (cart) => cart)
   cart: Cart;
 
   @ManyToOne(() => User, (user) => user.payments)
